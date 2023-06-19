@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
+import routers from "./routers/index.js";
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ type: "application/json" }));
 app.use(bodyParser.raw());
+
+routers(app);
 
 app.get("/", (req, res) => {
   return res.send("App is running...");
