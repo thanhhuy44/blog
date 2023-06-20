@@ -59,6 +59,27 @@ const handleGetRecentPosts = async () => {
   return response;
 };
 
+const handleGetPopularPosts = async () => {
+  const response = await Post.find({})
+    .sort({ likes: -1 })
+    .then((result, error) => {
+      if (result) {
+        return {
+          errCode: 0,
+          message: "success!",
+          data: result,
+        };
+      } else {
+        return {
+          errCode: 1,
+          message: "error!",
+          data: error,
+        };
+      }
+    });
+  return response;
+};
+
 const handleGetAllPosts = async (page = 1, pageSize = 20, category) => {
   if (category === "all") {
     const response = await Post.find({})
@@ -169,11 +190,49 @@ const handleSearchPosts = async (keyword) => {
   }
 };
 
+const handleGetDetailPost = async (id) => {
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    return {
+      errCode: 1,
+      message: "form error!",
+    };
+  } else {
+    const response = await Post.findById(id)
+      .populate("author")
+      .populate("categories")
+      .then((result, error) => {
+        if (error) {
+          return {
+            errCode: 1,
+            message: "error!",
+            data: error,
+          };
+        } else {
+          if (result) {
+            return {
+              errCode: 0,
+              message: "success!",
+              data: result,
+            };
+          } else {
+            return {
+              errCode: 1,
+              message: "post not found!",
+            };
+          }
+        }
+      });
+    return response;
+  }
+};
+
 const PostServices = {
   handleCreatePost,
+  handleGetPopularPosts,
   handleGetRecentPosts,
   handleGetAllPosts,
   handleSearchPosts,
+  handleGetDetailPost,
 };
 
 export default PostServices;

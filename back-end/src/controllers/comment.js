@@ -13,9 +13,15 @@ const update = async (req, res) => {
   return res.status(200).json(data);
 };
 
+const get = async (req, res) => {
+  const data = await CommentServices.handleGetCommentsOfPost(req.query.post);
+  return res.status(200).json(data);
+};
+
 const CommentControllers = {
   create,
   update,
+  get,
 };
 
 export default CommentControllers;

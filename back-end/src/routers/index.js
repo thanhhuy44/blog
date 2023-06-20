@@ -13,16 +13,21 @@ const routers = (app) => {
 
   //category
   router.post("/category", CategoryControllers.create);
+  router.get("/categories", CategoryControllers.getAll);
+  router.get("/categories/delete", CategoryControllers.remove);
 
   //post
   router.post("/post", PostControllers.create);
   router.get("/posts", PostControllers.getAll);
   router.get("/posts/recent", PostControllers.getRecent);
+  router.get("/posts/popular", PostControllers.getPopular);
+  router.get("/posts/detail/:id", PostControllers.getDetail);
   router.get("/posts/search", PostControllers.search);
 
   //comment
   router.post("/comment", CommentControllers.create);
   router.post("/comments/update/:id", CommentControllers.update);
+  router.get("/comments", CommentControllers.get);
 
   //404
   router.get("*", (req, res) => {

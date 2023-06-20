@@ -21,6 +21,12 @@ const CommentSchema = new Schema({
     type: mongoose.Types.ObjectId,
     ref: "Comment",
   },
+  childComment: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   createdAt: {
     type: Date,
     required: true,
