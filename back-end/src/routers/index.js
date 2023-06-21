@@ -10,6 +10,7 @@ const routers = (app) => {
   // user
   router.post("/signup", UserControllers.signup);
   router.post("/login", UserControllers.login);
+  router.post("/change-password", UserControllers.changePassword);
 
   //category
   router.post("/category", CategoryControllers.create);

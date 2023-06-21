@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 
@@ -100,9 +101,84 @@ const handleLogin = async (data) => {
   }
 };
 
+const handleChangePassword = async (data) => {
+  const { password, newPassword, userId } = data;
+  if (
+    !password ||
+    !newPassword ||
+    !userId ||
+    !mongoose.Types.ObjectId.isValid(userId)
+  ) {
+    return {
+      errCode: 1,
+      message: "form error!",
+    };
+  } else {
+    const response = await User.findById(userId)
+      .populate("password")
+      .then(async (result, error) => {
+        if (error) {
+          return {
+            errCode: 1,
+            message: "error!",
+            data: error,
+          };
+        } else {
+          if (result) {
+            const same = await bcrypt.compare(password, result.password);
+            console.log("🚀 ~ file: user.js:129 ~ .then ~ same:", same);
+            if (same) {
+              const hashPassword = await bcrypt.hash(newPassword, 10);
+              const updatePassword = await User.findByIdAndUpdate(
+                { _id: userId },
+                {
+                  password: hashPassword,
+                }
+              ).then((result, error) => {
+                if (error) {
+                  return {
+                    errCode: 1,
+                    message: "error!",
+                    data: error,
+                  };
+                } else {
+                  if (result) {
+                    return {
+                      errCode: 0,
+                      message: "success!",
+                      data: result,
+                    };
+                  } else {
+                    return {
+                      errCode: 1,
+                      message: "user not found!",
+                    };
+                  }
+                }
+              });
+              return updatePassword;
+            } else {
+              return {
+                errCode: "1",
+                message: "wrong password!",
+              };
+            }
+          } else {
+            return {
+              errCode: 1,
+              message: "user not found!",
+            };
+          }
+        }
+      });
+    return response;
+  }
+};
+
 const UserServices = {
   handleSignUp,
   handleLogin,
+  handleChangePassword,
 };
 
 export default UserServices;
