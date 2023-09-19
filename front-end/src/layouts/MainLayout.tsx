@@ -1,15 +1,11 @@
-import Header from "../components/Header";
+import Header from "@/components/Header";
+import { ReactNode } from "react";
 
-function MainLayout({ children }: { children: any }) {
+function MainLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-primary-light dark:bg-primary-dark min-h-screen text-text-primary-light dark:text-text-primary-dark">
-      <div className="w-full shadow-lg">
-        <div className="max-w-[1216px] mx-auto">
-          <Header />
-        </div>
-      </div>
-      <div className="max-w-[1216px] mx-auto">{children}</div>
-      <div className="max-w-[1216px] mx-auto">{/* footer */}</div>
+    <div className="w-screen">
+      <Header />
+      <div className="container mx-auto ">{children}</div>
     </div>
   );
 }

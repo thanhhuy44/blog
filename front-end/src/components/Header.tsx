@@ -1,64 +1,47 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { Moon, PenNib, Sun, UserCircle } from "@phosphor-icons/react";
-import { setTheme } from "../redux/theme";
+import React from "react";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  Link,
+  Button,
+} from "@nextui-org/react";
 
 function Header() {
-  const dispatch = useDispatch();
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-
-  const handleChangeTheme = (theme: string) => {
-    setIsDarkMode(!isDarkMode);
-    dispatch(setTheme(theme));
-  };
-
   return (
-    <div className="py-8 flex items-center justify-between">
-      <div>
-        <Link
-          to={"/"}
-          className="text-4xl font-semibold text-text-primary-light dark:text-text-primary-dark hover:text"
-        >
-          My Blog
-        </Link>
-      </div>
-      <div className="flex items-center gap-x-4 ">
-        <Link
-          className="text-text-primary-light dark:text-text-primary-dark"
-          to={"/"}
-        >
-          Blog
-        </Link>
-        <Link
-          to={"/upload"}
-          className="flex items-center py-1 px-3 gap-x-2 border border-gray-300 rounded-full hover:border-sky-300 duration-300 text-text-primary-light dark:text-text-primary-dark"
-        >
-          <PenNib size={20} />
-          <p>Create Post</p>
-        </Link>
-        <div className="flex items-center justify-center cursor-pointer text-text-primary-light dark:text-text-primary-dark hover:text-sky-300 duration-200">
-          <UserCircle size={40} />
-        </div>
-        <div className="flex items-center justify-center gap-x-4 cursor-pointer text-text-primary-light dark:text-text-primary-dark hover:text-sky-300 duration-200">
-          {isDarkMode ? (
-            <Sun
-              size={32}
-              onClick={() => {
-                handleChangeTheme("light");
-              }}
-            />
-          ) : (
-            <Moon
-              size={32}
-              onClick={() => {
-                handleChangeTheme("dark");
-              }}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+    <Navbar className="" maxWidth="xl" shouldHideOnScroll>
+      <NavbarBrand>
+        <p className="font-bold text-inherit">ACME</p>
+      </NavbarBrand>
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem>
+          <Link color="foreground" href="#">
+            Features
+          </Link>
+        </NavbarItem>
+        <NavbarItem isActive>
+          <Link href="#" aria-current="page">
+            Customers
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="#">
+            Integrations
+          </Link>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent justify="end">
+        <NavbarItem className="hidden lg:flex">
+          <Link href="#">Login</Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Button as={Link} color="primary" href="#" variant="flat">
+            Sign Up
+          </Button>
+        </NavbarItem>
+      </NavbarContent>
+    </Navbar>
   );
 }
 
