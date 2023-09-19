@@ -34,7 +34,13 @@ const PostSchema = new Schema({
     required: true,
     ref: "User",
   },
-  likes: {
+  likes: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  like_count: {
     type: Number,
     required: true,
     default: 0,
@@ -45,6 +51,11 @@ const PostSchema = new Schema({
       ref: "Comment",
     },
   ],
+  comment_count: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     required: true,

@@ -126,7 +126,6 @@ const handleChangePassword = async (data) => {
         } else {
           if (result) {
             const same = await bcrypt.compare(password, result.password);
-            console.log("🚀 ~ file: user.js:129 ~ .then ~ same:", same);
             if (same) {
               const hashPassword = await bcrypt.hash(newPassword, 10);
               const updatePassword = await User.findByIdAndUpdate(

@@ -3,7 +3,6 @@ import Post from "../models/post.js";
 import mongoose, { ObjectId } from "mongoose";
 
 const handleCreatePost = async (data) => {
-  console.log("🚀 ~ file: post.js:6 ~ handleCreatePost ~ data:", data);
   const { title, description, body, author, categories, thumbnail } = data;
 
   if (!title || !description || !body || !author || !categories || !thumbnail) {
