@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Navbar,
   NavbarBrand,
@@ -6,19 +6,33 @@ import {
   NavbarItem,
   Link,
   Button,
-} from "@nextui-org/react";
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from '@nextui-org/react';
 
 function Header() {
   return (
-    <Navbar className="" maxWidth="xl" shouldHideOnScroll>
-      <NavbarBrand>
+    <Navbar maxWidth="2xl" shouldHideOnScroll>
+      <NavbarBrand className="basis-0 grow-0">
         <p className="font-bold text-inherit">ACME</p>
       </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden sm:flex gap-4 flex-1" justify="end">
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
+          <Dropdown placement="bottom-end">
+            <DropdownTrigger>
+              <Button variant="light">User</Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem key="login">
+                <Link href="/login">Login</Link>
+              </DropdownItem>
+              <DropdownItem key="login">
+                <Link href="/register">Register</Link>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
         <NavbarItem isActive>
           <Link href="#" aria-current="page">
@@ -31,14 +45,21 @@ function Header() {
           </Link>
         </NavbarItem>
       </NavbarContent>
-      <NavbarContent justify="end">
+      <NavbarContent className="basis-0 !grow-0" justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
-          </Button>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="solid">User</Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Static Actions">
+              <DropdownItem key="login">
+                <Link href="/login">Login</Link>
+              </DropdownItem>
+              <DropdownItem key="login">
+                <Link href="/register">Register</Link>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </NavbarItem>
       </NavbarContent>
     </Navbar>
