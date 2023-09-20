@@ -8,7 +8,7 @@ const router = express.Router();
 
 const routers = (app) => {
   // user
-  router.post("/signup", UserControllers.signup);
+  router.post("/register", UserControllers.signup);
   router.post("/login", UserControllers.login);
   router.post("/change-password", UserControllers.changePassword);
 

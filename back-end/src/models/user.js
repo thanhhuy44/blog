@@ -5,19 +5,11 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
   {
-    fullName: {
-      type: String,
-      required: true,
-    },
-    userName: {
+    fullname: {
       type: String,
       required: true,
     },
     email: {
-      type: String,
-      required: true,
-    },
-    phoneNumber: {
       type: String,
       required: true,
     },
@@ -28,6 +20,11 @@ const UserSchema = new Schema(
     },
     posts: [{ type: mongoose.Types.ObjectId, ref: "Post" }],
     comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
+    type: {
+      type: String,
+      enum: ["local", "google", "facebook"],
+      default: "local",
+    },
   },
   {
     toJSON: {

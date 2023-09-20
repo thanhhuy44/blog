@@ -3,28 +3,29 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 
 const handleSignUp = async (data) => {
-  const { fullName, userName, email, phoneNumber, password } = data;
-  if (!fullName || !userName || !email || !phoneNumber || !password) {
+  const { fullname, email, password } = data;
+  if (!fullname || !email || !password) {
     return {
       errCode: 1,
       message: "form error!",
     };
   } else {
     const response = await User.findOne({
-      userName: data.userName,
+      email: data.email,
     }).then(async (result, error) => {
       if (error) {
         return {
           errCode: 1,
           message: "error!",
-          data: error,
+          error: error,
+          data: null,
         };
       } else {
         if (result) {
           return {
             errCode: 1,
             message: "user already exist!",
-            data: result,
+            data: null,
           };
         } else {
           const user = await User.create(data).then((result, error) => {
@@ -38,7 +39,7 @@ const handleSignUp = async (data) => {
               return {
                 errCode: 1,
                 message: "error!",
-                data: error,
+                data: null,
               };
             }
           });
@@ -51,15 +52,15 @@ const handleSignUp = async (data) => {
 };
 
 const handleLogin = async (data) => {
-  const { userName, password } = data;
-  if (!userName || !password) {
+  const { email, password } = data;
+  if (!email || !password) {
     return {
       errCode: 1,
       message: "form error!",
     };
   } else {
     const response = await User.findOne({
-      userName: userName,
+      email: email,
     })
       .select("+password")
       .then(async (result, error) => {
@@ -67,7 +68,7 @@ const handleLogin = async (data) => {
           return {
             errCode: 1,
             message: "error!",
-            data: error,
+            data: null,
           };
         } else {
           if (result) {
@@ -85,14 +86,14 @@ const handleLogin = async (data) => {
               return {
                 errCode: 1,
                 message: "wrong password!",
-                data: {},
+                data: null,
               };
             }
           } else {
             return {
               errCode: 1,
               message: "user not found!",
-              data: {},
+              data: null,
             };
           }
         }
