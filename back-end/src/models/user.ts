@@ -3,7 +3,16 @@ import bcrypt from "bcrypt";
 
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema(
+export interface IUser {
+  fullname: string;
+  email: string;
+  password: string;
+  posts?: string[];
+  comments?: string[];
+  type?: "local" | "google";
+}
+
+const UserSchema = new Schema<IUser>(
   {
     fullname: {
       type: String,
@@ -18,11 +27,22 @@ const UserSchema = new Schema(
       required: true,
       select: false,
     },
-    posts: [{ type: mongoose.Types.ObjectId, ref: "Post" }],
-    comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
+    posts: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    comments: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Comment",
+        select: false,
+      },
+    ],
     type: {
       type: String,
-      enum: ["local", "google", "facebook"],
+      enum: ["local", "google"],
       default: "local",
     },
   },

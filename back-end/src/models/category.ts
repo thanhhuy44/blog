@@ -1,8 +1,13 @@
 import mongoose from "mongoose";
-
 const Schema = mongoose.Schema;
 
-const CategorySchema = new Schema({
+export interface ICategory {
+  name: string;
+  description: string;
+  blogs?: mongoose.Types.ObjectId[];
+}
+
+const CategorySchema = new Schema<ICategory>({
   name: {
     type: String,
     required: true,
@@ -12,10 +17,10 @@ const CategorySchema = new Schema({
     required: true,
     default: "",
   },
-  posts: [
+  blogs: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "Post",
+      ref: "Blog",
     },
   ],
 });

@@ -7,7 +7,9 @@ import GoogleIcon from "@/assets/icons/google.svg";
 import FacebookIcon from "@/assets/icons/facebook.svg";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
+import FacebookLogin from "@greatsumini/react-facebook-login";
 import AuthApi from "@/api/auth";
+import { useGoogleLogin } from "@react-oauth/google";
 
 interface RegisterFormInputs {
   email: string;
@@ -21,6 +23,10 @@ function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormInputs>();
+
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => console.log(tokenResponse),
+  });
 
   const handleLogin: SubmitHandler<RegisterFormInputs> = async (data: any) => {
     const response = await AuthApi.loginLocal(data);
@@ -121,12 +127,34 @@ function Login() {
           <span className="h-[1px] flex-1 bg-[#e3e3e4]"></span>
         </div>
         <div className="flex items-center justify-center gap-x-4">
-          <div className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer">
+          <div
+            onClick={() => {
+              login();
+            }}
+            className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer"
+          >
             <Image width={32} src={GoogleIcon} alt="google" />
           </div>
-          <div className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer">
-            <Image width={30} src={FacebookIcon} alt="fb" />
-          </div>
+          <FacebookLogin
+            appId="847018003600123"
+            onSuccess={(response) => {
+              console.log("Login Success!", response);
+            }}
+            onFail={(error) => {
+              console.log("Login Failed!", error);
+            }}
+            onProfileSuccess={(response) => {
+              console.log("Get Profile Success!", response);
+            }}
+            render={({ onClick, logout }) => (
+              <div
+                onClick={onClick}
+                className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer"
+              >
+                <Image width={30} src={FacebookIcon} alt="fb" />
+              </div>
+            )}
+          />
         </div>
       </div>
       <div className="flex items-center justify-center mt-16 text-base font-semibold leading-6 gap-x-2">
