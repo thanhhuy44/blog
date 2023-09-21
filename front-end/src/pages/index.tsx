@@ -4,7 +4,6 @@ import { Metadata } from "next";
 import Image from "next/image";
 import { ReactElement, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Tabs, Tab } from "@nextui-org/react";
 import Link from "next/link";
 import Head from "next/head";
 
