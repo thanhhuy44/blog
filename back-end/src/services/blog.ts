@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Blog, { IBlog } from "../models/blog";
-import { Pagination } from "../constants";
+import { Pagination, ReactionType } from "../constants";
+import User from "../models/user";
+import Category from "../models/category";
 
 interface ResponseType {
   errCode: number;
@@ -26,21 +28,39 @@ const uploadBlog = async (body: IBlog) => {
           data: null,
         });
       } else {
-        const blog = await Blog.create({
-          ...body,
-          slug: body.title.toLowerCase().trim().replaceAll(" ", "-"),
-          createdAt: Date.now(),
-        });
-        if (blog) {
-          resolve({
-            errCode: 0,
-            message: "success!",
-            data: blog,
+        const isExistAuthor = await User.findById(body.author);
+        if (isExistAuthor) {
+          const blog = await Blog.create({
+            ...body,
+            slug: body.title.toLowerCase().trim().replaceAll(" ", "-"),
+            createdAt: Date.now(),
           });
+          if (blog) {
+            if (
+              body.category &&
+              mongoose.Types.ObjectId.isValid(body.category)
+            ) {
+              await Category.findOneAndUpdate(body.category, {
+                $push: blog._id,
+              });
+            } else {
+              resolve({
+                errCode: 0,
+                message: "success!",
+                data: blog,
+              });
+            }
+          } else {
+            resolve({
+              errCode: 0,
+              message: "error!",
+              data: null,
+            });
+          }
         } else {
           resolve({
-            errCode: 0,
-            message: "error!",
+            errCode: 1,
+            message: "author not found!",
             data: null,
           });
         }
@@ -55,32 +75,72 @@ const uploadBlog = async (body: IBlog) => {
   });
 };
 
-const getAll = async (page: number = 1, pageSize: number = 10) => {
+const getAll = async (
+  page: number = 1,
+  pageSize: number = 10,
+  category?: string
+) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      const blogs = await Blog.find({})
-        .populate("author")
-        .skip((page - 1) * pageSize)
-        .limit(pageSize);
-      if (blogs) {
-        const total = await Blog.count();
-        resolve({
-          errCode: 0,
-          message: "success!",
-          data: blogs,
-          pagination: {
-            page,
-            pageSize,
-            totalPage: Math.ceil(total / pageSize),
-            total,
-          },
-        });
+      let blogs;
+      if (category) {
+        if (mongoose.Types.ObjectId.isValid(category)) {
+          blogs = await Blog.find({ category })
+            .populate("author")
+            .skip((page - 1) * pageSize)
+            .limit(pageSize);
+          if (blogs.length) {
+            const total = await Blog.count();
+            resolve({
+              errCode: 0,
+              message: "success!",
+              data: blogs,
+              pagination: {
+                page,
+                pageSize,
+                totalPage: Math.ceil(total / pageSize),
+                total,
+              },
+            });
+          } else {
+            resolve({
+              errCode: 1,
+              message: "haven't blogs!",
+              data: null,
+            });
+          }
+        } else {
+          resolve({
+            errCode: 1,
+            message: "invalid category!",
+            data: null,
+          });
+        }
       } else {
-        resolve({
-          errCode: 1,
-          message: "haven't blogs!",
-          data: null,
-        });
+        blogs = await Blog.find({})
+          .populate("author")
+          .skip((page - 1) * pageSize)
+          .limit(pageSize);
+        if (blogs.length) {
+          const total = await Blog.count();
+          resolve({
+            errCode: 0,
+            message: "success!",
+            data: blogs,
+            pagination: {
+              page,
+              pageSize,
+              totalPage: Math.ceil(total / pageSize),
+              total,
+            },
+          });
+        } else {
+          resolve({
+            errCode: 1,
+            message: "haven't blogs!",
+            data: null,
+          });
+        }
       }
     } catch (error) {
       resolve({
@@ -102,8 +162,10 @@ const getDetail = async (id: string) => {
           data: null,
         });
       } else {
-        const blog = await Blog.findById(id)
-          .select("+likes+comments")
+        const blog = await Blog.findByIdAndUpdate(id, {
+          $inc: { view_count: 1 },
+        })
+          .select("+likes +comments")
           .populate("likes")
           .populate("comments")
           .populate("author")
@@ -132,10 +194,189 @@ const getDetail = async (id: string) => {
   });
 };
 
+const reaction = async (id: string, body: { action: string; user: string }) => {
+  return new Promise<ResponseType>(async (resolve, reject) => {
+    try {
+      if (
+        !id ||
+        !mongoose.Types.ObjectId.isValid(id) ||
+        !body.action ||
+        (body.action !== ReactionType.LIKE &&
+          body.action !== ReactionType.UNLIKE) ||
+        !body.user ||
+        !mongoose.Types.ObjectId.isValid(body.user)
+      ) {
+        resolve({
+          errCode: 1,
+          message: "form error!",
+          data: null,
+        });
+      } else {
+        const userMongoId = new mongoose.Types.ObjectId(body.user);
+        const blog = await Blog.findById(id).select("+likes");
+        if (blog) {
+          if (body.action === ReactionType.LIKE) {
+            if (blog.likes?.includes(userMongoId)) {
+              resolve({
+                errCode: 1,
+                message: "already liked!",
+                data: null,
+              });
+            } else {
+              const updatedBlog = await Blog.findByIdAndUpdate(id, {
+                $inc: { like_count: 1 },
+                $push: { likes: userMongoId },
+              });
+              if (updatedBlog) {
+                resolve({
+                  errCode: 0,
+                  message: "success!",
+                  data: updatedBlog,
+                });
+              } else {
+                resolve({
+                  errCode: 1,
+                  message: "blog not found!",
+                  data: null,
+                });
+              }
+            }
+          } else if (body.action === ReactionType.UNLIKE) {
+            if (!blog.likes?.includes(userMongoId)) {
+              resolve({
+                errCode: 1,
+                message: "already unliked!",
+                data: null,
+              });
+            } else {
+              const updatedBlog = await Blog.findByIdAndUpdate(id, {
+                $inc: { like_count: -1 },
+                $pull: { likes: body.user },
+              });
+              if (updatedBlog) {
+                resolve({
+                  errCode: 0,
+                  message: "success!",
+                  data: updatedBlog,
+                });
+              } else {
+                resolve({
+                  errCode: 1,
+                  message: "comment not found!",
+                  data: null,
+                });
+              }
+            }
+          } else {
+            resolve({
+              errCode: 1,
+              message: "action invalid!",
+              data: null,
+            });
+          }
+        } else {
+          resolve({
+            errCode: 1,
+            message: "blog not found!",
+            data: null,
+          });
+        }
+      }
+    } catch (error) {
+      resolve({
+        errCode: 1,
+        message: "error!",
+        data: null,
+      });
+    }
+  });
+};
+
+const remove = async (id: string) => {
+  return new Promise<ResponseType>(async (resolve, reject) => {
+    try {
+      if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+        resolve({
+          errCode: 1,
+          message: "form error!",
+          data: null,
+        });
+      } else {
+        const removedBlog = await Blog.findByIdAndDelete(id);
+        if (removedBlog) {
+          resolve({
+            errCode: 0,
+            message: "success!",
+            data: removedBlog,
+          });
+        } else {
+          resolve({
+            errCode: 1,
+            message: "blog not found!",
+            data: null,
+          });
+        }
+      }
+    } catch (error) {
+      resolve({
+        errCode: 1,
+        message: "error!",
+        data: null,
+      });
+    }
+  });
+};
+
+const search = async (
+  keyword: string,
+  page: number = 1,
+  pageSize: number = 10
+) => {
+  return new Promise<ResponseType>(async (resolve, reject) => {
+    try {
+      if (!keyword || keyword.trim() === "") {
+        resolve({
+          errCode: 1,
+          message: "invalid keyword!",
+          data: null,
+        });
+      } else {
+        const blogs = await Blog.find({ $text: { $search: keyword } })
+          .populate("author")
+          .skip((page - 1) * pageSize)
+          .limit(pageSize);
+
+        if (blogs) {
+          resolve({
+            errCode: 0,
+            message: "success!",
+            data: blogs,
+          });
+        } else {
+          resolve({
+            errCode: 1,
+            message: "error!",
+            data: null,
+          });
+        }
+      }
+    } catch (error) {
+      resolve({
+        errCode: 1,
+        message: "error!",
+        data: null,
+      });
+    }
+  });
+};
+
 const BlogServices = {
   uploadBlog,
   getAll,
   getDetail,
+  reaction,
+  remove,
+  search,
 };
 
 export default BlogServices;

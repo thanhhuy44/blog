@@ -31,11 +31,23 @@ const create = async (body: IComment) => {
             if (isExistParent) {
               const newComment = await Comment.create(body);
               if (newComment) {
-                resolve({
-                  errCode: 1,
-                  message: "success!",
-                  data: newComment,
+                const updatedBlog = await Blog.findByIdAndUpdate(body.blog, {
+                  $inc: { comment_count: 1 },
+                  $push: { comments: newComment._id },
                 });
+                if (updatedBlog) {
+                  resolve({
+                    errCode: 1,
+                    message: "success!",
+                    data: newComment,
+                  });
+                } else {
+                  resolve({
+                    errCode: 0,
+                    message: "error!",
+                    data: null,
+                  });
+                }
               } else {
                 resolve({
                   errCode: 0,
@@ -53,11 +65,23 @@ const create = async (body: IComment) => {
           } else {
             const newComment = await Comment.create(body);
             if (newComment) {
-              resolve({
-                errCode: 1,
-                message: "success!",
-                data: newComment,
+              const updatedBlog = await Blog.findByIdAndUpdate(body.blog, {
+                $inc: { comment_count: 1 },
+                $push: { comments: newComment._id },
               });
+              if (updatedBlog) {
+                resolve({
+                  errCode: 1,
+                  message: "success!",
+                  data: newComment,
+                });
+              } else {
+                resolve({
+                  errCode: 0,
+                  message: "error!",
+                  data: null,
+                });
+              }
             } else {
               resolve({
                 errCode: 0,

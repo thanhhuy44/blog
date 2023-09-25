@@ -1,45 +1,31 @@
 import mongoose from "mongoose";
-import Category, { ICategory } from "../models/category";
+import User, { IUser } from "../models/user";
 
 interface ResponseType {
   errCode: number;
   message: string;
-  data: ICategory | ICategory[] | null;
+  data: IUser | IUser[] | null;
 }
 
-const create = async (data: { name: string; desdescription: string }) => {
+const getAll = async (page: number = 1, pageSize: number = 10) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      if (!data.name || data.desdescription) {
+      const users = await User.find({})
+        .populate("blogs")
+        .skip((page - 1) * pageSize)
+        .limit(pageSize);
+      if (users) {
         resolve({
-          errCode: 1,
-          message: "form error!",
-          data: null,
+          errCode: 0,
+          message: "success!",
+          data: users,
         });
       } else {
-        const existCategory = await Category.find({ name: data.name });
-        if (existCategory.length) {
-          resolve({
-            errCode: 1,
-            message: "category is exist!",
-            data: null,
-          });
-        } else {
-          const newCategory = await Category.create(data);
-          if (newCategory) {
-            resolve({
-              errCode: 0,
-              message: "success!",
-              data: newCategory,
-            });
-          } else {
-            resolve({
-              errCode: 1,
-              message: "error!",
-              data: null,
-            });
-          }
-        }
+        resolve({
+          errCode: 1,
+          message: "haven't user!",
+          data: null,
+        });
       }
     } catch (error) {
       resolve({
@@ -51,22 +37,38 @@ const create = async (data: { name: string; desdescription: string }) => {
   });
 };
 
-const getAll = async () => {
+const search = async (
+  keyword: string,
+  page: number = 1,
+  pageSize: number = 10
+) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      const categories = await Category.find({});
-      if (categories.length) {
-        resolve({
-          errCode: 0,
-          message: "success!",
-          data: categories,
-        });
-      } else {
+      if (!keyword || keyword.trim() === "") {
         resolve({
           errCode: 1,
-          message: "haven't category!",
-          data: categories,
+          message: "invalid keyword!",
+          data: null,
         });
+      } else {
+        const users = await User.find({ $text: { $search: keyword } })
+          .populate("blogs")
+          .skip((page - 1) * pageSize)
+          .limit(pageSize);
+
+        if (users) {
+          resolve({
+            errCode: 0,
+            message: "success!",
+            data: users,
+          });
+        } else {
+          resolve({
+            errCode: 1,
+            message: "error!",
+            data: null,
+          });
+        }
       }
     } catch (error) {
       resolve({
@@ -81,24 +83,24 @@ const getAll = async () => {
 const getDetail = async (id: string) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      if (!mongoose.Types.ObjectId.isValid(id)) {
+      if (!id || !mongoose.Types.ObjectId.isValid(id)) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: "invalid id!",
           data: null,
         });
       } else {
-        const category = await Category.findById(id).populate("blogs");
-        if (category) {
+        const user = await User.findById(id);
+        if (user) {
           resolve({
             errCode: 0,
             message: "success!",
-            data: category,
+            data: user,
           });
         } else {
           resolve({
-            errCode: 1,
-            message: "category not found!",
+            errCode: 0,
+            message: "error!",
             data: null,
           });
         }
@@ -113,36 +115,27 @@ const getDetail = async (id: string) => {
   });
 };
 
-const update = async (
-  id: string,
-  body?: {
-    name: string;
-    description: string;
-  }
-) => {
+const update = async (id: string, body: IUser) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      if (
-        !mongoose.Types.ObjectId.isValid(id) ||
-        (body && !body.name && !body?.description)
-      ) {
+      if (!id || !mongoose.Types.ObjectId.isValid(id) || !body) {
         resolve({
           errCode: 1,
           message: "form error!",
           data: null,
         });
       } else {
-        const updatedCategory = await Category.findByIdAndUpdate(id, body);
-        if (updatedCategory) {
+        const user = await User.findByIdAndUpdate(id, body);
+        if (user) {
           resolve({
             errCode: 0,
             message: "success!",
-            data: updatedCategory,
+            data: user,
           });
         } else {
           resolve({
-            errCode: 1,
-            message: "category not found!",
+            errCode: 0,
+            message: "user not found!",
             data: null,
           });
         }
@@ -160,24 +153,24 @@ const update = async (
 const remove = async (id: string) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      if (!mongoose.Types.ObjectId.isValid(id)) {
+      if (!id || !mongoose.Types.ObjectId.isValid(id)) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: "invalid id!",
           data: null,
         });
       } else {
-        const removedCategory = await Category.findByIdAndDelete(id);
-        if (removedCategory) {
+        const removedUser = await User.findByIdAndDelete(id);
+        if (removedUser) {
           resolve({
             errCode: 0,
             message: "success!",
-            data: removedCategory,
+            data: removedUser,
           });
         } else {
           resolve({
             errCode: 1,
-            message: "category not found!",
+            message: "user not found!",
             data: null,
           });
         }
@@ -192,12 +185,12 @@ const remove = async (id: string) => {
   });
 };
 
-const CategoryServices = {
-  create,
+const UserServices = {
   getAll,
+  search,
   getDetail,
   update,
   remove,
 };
 
-export default CategoryServices;
+export default UserServices;

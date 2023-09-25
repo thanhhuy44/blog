@@ -7,7 +7,7 @@ export interface IComment {
   content: string;
   parent?: mongoose.Types.ObjectId;
   children?: mongoose.Types.ObjectId[];
-  likes?: mongoose.Types.ObjectId[];
+  likes: mongoose.Types.ObjectId[];
   like_count: number;
 }
 

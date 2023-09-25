@@ -7,8 +7,8 @@ export interface IUser {
   fullname: string;
   email: string;
   password: string;
-  posts?: string[];
-  comments?: string[];
+  blogs?: mongoose.Types.ObjectId[];
+  comments?: mongoose.Types.ObjectId[];
   type?: "local" | "google";
 }
 
@@ -27,15 +27,15 @@ const UserSchema = new Schema<IUser>(
       required: true,
       select: false,
     },
-    posts: [
+    blogs: [
       {
-        type: mongoose.Types.ObjectId,
-        ref: "Post",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Blog",
       },
     ],
     comments: [
       {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
         select: false,
       },
@@ -50,10 +50,15 @@ const UserSchema = new Schema<IUser>(
     toJSON: {
       transform(doc, user) {
         delete user.password;
+        delete user.comments;
       },
     },
   }
 );
+
+UserSchema.index({
+  fullname: "text",
+});
 
 UserSchema.pre("save", function (next) {
   let user = this;

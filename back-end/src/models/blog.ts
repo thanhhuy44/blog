@@ -7,14 +7,14 @@ export interface IBlog {
   description: string;
   content: string;
   view_count: number;
-  slug?: string;
+  slug: string;
   likes?: mongoose.Types.ObjectId[];
   like_count: number;
   comments?: mongoose.Types.ObjectId[];
   comment_count: number;
-  author?: mongoose.Types.ObjectId;
+  author: mongoose.Types.ObjectId;
   createdAt: Date;
-  category?: mongoose.Types.ObjectId;
+  category: mongoose.Types.ObjectId;
 }
 
 const BlogSchema = new Schema<IBlog>({
@@ -31,10 +31,8 @@ const BlogSchema = new Schema<IBlog>({
     required: true,
   },
   category: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
-    required: true,
-    default: "all",
   },
   content: {
     type: String,
@@ -50,7 +48,7 @@ const BlogSchema = new Schema<IBlog>({
   },
   likes: [
     {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       select: false,
     },
@@ -61,7 +59,7 @@ const BlogSchema = new Schema<IBlog>({
   },
   comments: [
     {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
       select: false,
     },
@@ -71,7 +69,7 @@ const BlogSchema = new Schema<IBlog>({
     default: 0,
   },
   author: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: "User",
   },
@@ -80,6 +78,8 @@ const BlogSchema = new Schema<IBlog>({
     default: Date.now(),
   },
 });
-
+BlogSchema.index({
+  title: "text",
+});
 const Blog = mongoose.model("Blog", BlogSchema);
 export default Blog;
