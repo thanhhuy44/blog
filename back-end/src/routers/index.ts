@@ -36,7 +36,7 @@ const routers = (app: Application) => {
 
   //   404
   router.get("*", (req: Request, res: Response) => {
-    res.status(404).json({
+    return res.status(404).json({
       errCode: 404,
       message: "not found!",
       data: null,
