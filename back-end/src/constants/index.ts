@@ -4,3 +4,8 @@ export interface Pagination {
   totalPage: number;
   total?: number;
 }
+
+export const ReactionType = {
+  LIKE: "like",
+  UNLIKE: "unlike",
+};
