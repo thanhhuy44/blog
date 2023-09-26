@@ -4,6 +4,7 @@ import BlogControllers from "../controllers/blog";
 import CategoryControllers from "../controllers/category";
 import CommentControllers from "../controllers/comment";
 import UserControllers from "../controllers/user";
+import { authenticateToken } from "../middlewares/auth";
 
 const router = express.Router();
 
@@ -18,32 +19,44 @@ const routers = (app: Application) => {
   router.post("/auth/change-password", AuthControllers.changePassword);
 
   // blogs
-  router.post("/blogs", BlogControllers.uploadBlog);
+  router.post("/blogs", authenticateToken, BlogControllers.uploadBlog);
   router.get("/blogs", BlogControllers.getAll);
   router.get("/blogs/search", BlogControllers.search);
   router.get("/blogs/:id", BlogControllers.getDetail);
-  router.post("/blogs/reaction/:id", BlogControllers.reaction);
-  router.delete("/blogs/:id", BlogControllers.remove);
+  router.post(
+    "/blogs/reaction/:id",
+    authenticateToken,
+    BlogControllers.reaction
+  );
+  router.delete("/blogs/:id", authenticateToken, BlogControllers.remove);
 
   //category
-  router.post("/categories", CategoryControllers.create);
+  router.post("/categories", authenticateToken, CategoryControllers.create);
   router.get("/categories", CategoryControllers.getAll);
   router.get("/categories/:id", CategoryControllers.getDetail);
-  router.put("/categories/:id", CategoryControllers.update);
-  router.delete("/categories/:id", CategoryControllers.remove);
+  router.put("/categories/:id", authenticateToken, CategoryControllers.update);
+  router.delete(
+    "/categories/:id",
+    authenticateToken,
+    CategoryControllers.remove
+  );
 
   // comment
-  router.post("/comments", CommentControllers.create);
-  router.post("/comments/reaction/:id", CommentControllers.reaction);
-  router.put("/comments/edit/:id", CommentControllers.edit);
-  router.delete("/comments/:id", CommentControllers.remove);
+  router.post("/comments", authenticateToken, CommentControllers.create);
+  router.post(
+    "/comments/reaction/:id",
+    authenticateToken,
+    CommentControllers.reaction
+  );
+  router.put("/comments/edit/:id", authenticateToken, CommentControllers.edit);
+  router.delete("/comments/:id", authenticateToken, CommentControllers.remove);
 
   // user
   router.get("/users", UserControllers.getAll);
   router.get("/users/search", UserControllers.search);
   router.get("/users/:id", UserControllers.getDetail);
-  router.put("/users/:id", UserControllers.update);
-  router.delete("/users/:id", UserControllers.remove);
+  router.put("/users/:id", authenticateToken, UserControllers.update);
+  router.delete("/users/:id", authenticateToken, UserControllers.remove);
 
   //   404
   router.get("*", (req: Request, res: Response) => {
@@ -75,6 +88,29 @@ const routers = (app: Application) => {
     });
   });
 
+  router.patch("*", (req: Request, res: Response) => {
+    return res.status(404).json({
+      errCode: 404,
+      message: "not found!",
+      data: null,
+    });
+  });
+
+  router.head("*", (req: Request, res: Response) => {
+    return res.status(404).json({
+      errCode: 404,
+      message: "not found!",
+      data: null,
+    });
+  });
+
+  router.options("*", (req: Request, res: Response) => {
+    return res.status(404).json({
+      errCode: 404,
+      message: "not found!",
+      data: null,
+    });
+  });
   //   return
   return app.use("/api", router);
 };

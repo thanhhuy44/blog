@@ -43,13 +43,13 @@ const uploadBlog = async (body: IBlog) => {
               await Category.findOneAndUpdate(body.category, {
                 $push: blog._id,
               });
-            } else {
-              resolve({
-                errCode: 0,
-                message: "success!",
-                data: blog,
-              });
             }
+
+            resolve({
+              errCode: 0,
+              message: "success!",
+              data: blog,
+            });
           } else {
             resolve({
               errCode: 0,

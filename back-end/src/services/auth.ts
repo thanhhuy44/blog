@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User, { IUser } from "../models/user";
+import jwt from "jsonwebtoken";
 
 interface ResponseType {
   errCode: number;
   message: string;
   data: IUser | null;
+  token?: string;
 }
 
 const login = async (body: { email: string; password: string }) => {
@@ -27,10 +29,14 @@ const login = async (body: { email: string; password: string }) => {
             user.password
           );
           if (isValidPassword) {
+            let token = jwt.sign({ user }, process.env.PRIVATE_KEY || "", {
+              expiresIn: "1h",
+            });
             resolve({
               errCode: 0,
               message: "login success!",
               data: user,
+              token,
             });
           } else {
             resolve({
