@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 
 export interface IUser {
   fullname: string;
+  avatar: string;
   email: string;
   password: string;
   blogs?: mongoose.Types.ObjectId[];
@@ -17,6 +18,12 @@ const UserSchema = new Schema<IUser>(
     fullname: {
       type: String,
       required: true,
+    },
+    avatar: {
+      type: String,
+      required: true,
+      default:
+        "https://my-blog-assets.s3.us-east-005.backblazeb2.com/default_avatar.png",
     },
     email: {
       type: String,

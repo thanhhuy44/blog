@@ -53,6 +53,7 @@ const routers = (app: Application) => {
 
   // user
   router.get("/users", UserControllers.getAll);
+  router.put("/users/upload", authenticateToken, UserControllers.changeAvatar);
   router.get("/users/search", UserControllers.search);
   router.get("/users/:id", UserControllers.getDetail);
   router.put("/users/:id", authenticateToken, UserControllers.update);

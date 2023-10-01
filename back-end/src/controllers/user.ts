@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, Express } from "express";
 import UserServices from "../services/user";
 
 const getAll = async (req: Request, res: Response) => {
@@ -38,12 +38,21 @@ const remove = async (req: Request, res: Response) => {
   return res.status(200).json(data);
 };
 
+const changeAvatar = async (req: Request, res: Response) => {
+  const data = await UserServices.changeAvatar(
+    req.files ? req.files : null,
+    req.body.user
+  );
+  return res.status(200).json(data);
+};
+
 const UserControllers = {
   getAll,
   search,
   getDetail,
   update,
   remove,
+  changeAvatar,
 };
 
 export default UserControllers;
