@@ -208,7 +208,7 @@ const changeAvatar = async (file: any, id: string | null) => {
             bucketId: "84def1e2e7afea948aad041d",
             // ...common arguments (optional)
           })
-          .then(async (response) => {
+          .then(async (response: any) => {
             await b2
               .uploadFile({
                 uploadUrl: response.data.uploadUrl,
@@ -224,11 +224,11 @@ const changeAvatar = async (file: any, id: string | null) => {
                 //     key1: "value",
                 //     key2: "value",
                 // },
-                onUploadProgress: (event) => {},
+                onUploadProgress: (event: any) => {},
                 //onUploadProgress: (event) => {} || null // progress monitoring
                 // ...common arguments (optional)
               })
-              .then(async (response) => {
+              .then(async (response: any) => {
                 if (response.data.fileName) {
                   const updatedUser = await User.findByIdAndUpdate(id, {
                     avatar: `https://my-blog-assets.s3.us-east-005.backblazeb2.com/${response.data.fileName}`,

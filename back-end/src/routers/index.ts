@@ -5,6 +5,7 @@ import CategoryControllers from "../controllers/category";
 import CommentControllers from "../controllers/comment";
 import UserControllers from "../controllers/user";
 import { authenticateToken } from "../middlewares/auth";
+import UploadController from "../controllers/upload";
 
 const router = express.Router();
 
@@ -58,6 +59,9 @@ const routers = (app: Application) => {
   router.get("/users/:id", UserControllers.getDetail);
   router.put("/users/:id", authenticateToken, UserControllers.update);
   router.delete("/users/:id", authenticateToken, UserControllers.remove);
+
+  // upload
+  router.post("/upload", UploadController.upload);
 
   //   404
   router.get("*", (req: Request, res: Response) => {
