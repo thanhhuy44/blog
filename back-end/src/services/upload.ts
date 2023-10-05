@@ -1,7 +1,7 @@
 import { UploadedFile } from "express-fileupload";
 import { b2 } from "../index";
 interface ResponseType {
-  errCode: 1;
+  errCode: number;
   message: string;
   data: string | null;
 }
@@ -31,7 +31,7 @@ const upload = async (file: UploadedFile) => {
             .then(async (response: any) => {
               if (response) {
                 resolve({
-                  errCode: 1,
+                  errCode: 0,
                   message: "success!",
                   data: `https://my-blog-assets.s3.us-east-005.backblazeb2.com/${response?.data?.fileName}`,
                 });
