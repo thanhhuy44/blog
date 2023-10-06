@@ -24,7 +24,11 @@ if (databaseURL) {
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://192.168.1.41:3000"],
+    origin: [
+      "http://localhost:3000",
+      "http://192.168.1.41:3000",
+      "http://localhost:8080",
+    ],
     credentials: true,
   })
 );

@@ -1,32 +1,22 @@
 import MainLayout from "@/layouts/MainLayout";
 import { ReactElement } from "react";
 import dynamic from "next/dynamic";
+import UploadApi from "@/api/upload";
 import "react-quill/dist/quill.snow.css";
 
-const QuillNoSSRWrapper = dynamic(import("react-quill"), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-});
-
-const modules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }],
-    [{ size: [] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
-    ],
-    ["link", "image", "video"],
-    ["clean"],
-  ],
-  clipboard: {
-    // toggle to add extra line breaks when pasting HTML:
-    matchVisual: false,
+const QuillNoSSRWrapper = dynamic(
+  async () => {
+    const { default: RQ } = await import("react-quill");
+    const { default: ImageUploader } = await import("quill-image-uploader");
+    RQ.Quill.register("modules/imageUploader", ImageUploader);
+    return function forwardRef({ ...props }) {
+      return <RQ {...props} />;
+    };
   },
-};
+  {
+    ssr: false,
+  }
+);
 
 const formats = [
   "header",
@@ -47,12 +37,41 @@ const formats = [
 
 function Upload() {
   return (
-    <div className="container mx-auto my-28">
+    <div className="container max-w-5xl mx-auto my-28">
       <QuillNoSSRWrapper
-        modules={modules}
+        // @ts-ignore
+        modules={{
+          toolbar: [
+            [{ header: "1" }, { header: "2" }],
+            [{ size: [] }],
+            ["bold", "italic", "underline", "strike", "blockquote"],
+            [
+              { list: "ordered" },
+              { list: "bullet" },
+              { indent: "-1" },
+              { indent: "+1" },
+            ],
+            ["link", "image", "video"],
+            ["clean"],
+          ],
+          clipboard: {
+            // toggle to add extra line breaks when pasting HTML:
+            matchVisual: false,
+          },
+          imageUploader: {
+            upload: async (file: File) => {
+              const url = await UploadApi.upload({ file });
+              if (url) {
+                return url;
+              } else {
+                alert("Upload failed!");
+              }
+            },
+          },
+        }}
         formats={formats}
         theme="snow"
-        onChange={(content) => {
+        onChange={(content: any) => {
           console.log("CONTETN: ", content);
         }}
         style={{
