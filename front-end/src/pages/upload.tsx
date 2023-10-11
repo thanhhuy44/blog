@@ -8,7 +8,9 @@ const QuillNoSSRWrapper = dynamic(
   async () => {
     const { default: RQ } = await import("react-quill");
     const { default: ImageUploader } = await import("quill-image-uploader");
+    const { default: ImageResize } = await import("quill-image-resize");
     RQ.Quill.register("modules/imageUploader", ImageUploader);
+    RQ.Quill.register("modules/imageResize", ImageResize);
     return function forwardRef({ ...props }) {
       return <RQ {...props} />;
     };
@@ -44,15 +46,21 @@ function Upload() {
           toolbar: [
             [{ header: "1" }, { header: "2" }],
             [{ size: [] }],
-            ["bold", "italic", "underline", "strike", "blockquote"],
+            [
+              "bold",
+              "italic",
+              "underline",
+              "strike",
+              "blockquote",
+              "code-block",
+            ],
             [
               { list: "ordered" },
               { list: "bullet" },
               { indent: "-1" },
               { indent: "+1" },
             ],
-            ["link", "image", "video"],
-            ["clean"],
+            ["link", "image"],
           ],
           clipboard: {
             // toggle to add extra line breaks when pasting HTML:
@@ -67,6 +75,9 @@ function Upload() {
                 alert("Upload failed!");
               }
             },
+          },
+          imageResize: {
+            modules: ["Resize", "DisplaySize", "Toolbar"],
           },
         }}
         formats={formats}

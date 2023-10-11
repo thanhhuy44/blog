@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AuthLayout from "@/layouts/AuthLayout";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { Eye, EyeSlash, CircleNotch } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ReactElement } from "react";
 import GoogleIcon from "@/assets/icons/google.svg";
@@ -8,6 +8,8 @@ import FacebookIcon from "@/assets/icons/facebook.svg";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
 import AuthApi from "@/api/auth";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 interface RegisterFormInputs {
   fullname: string;
@@ -18,19 +20,34 @@ interface RegisterFormInputs {
 }
 
 function Register() {
-  const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm<RegisterFormInputs>();
+  const [hidePassword, setHidePassword] = useState<boolean>(true);
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const password = watch("password", "");
-
   const handleRegister: SubmitHandler<RegisterFormInputs> = async (
     data: any
   ) => {
-    await AuthApi.registerLocal(data);
+    // await AuthApi.registerLocal(data);
+    if (!isSubmit) {
+      setIsSubmit(true);
+      const response = await AuthApi.registerLocal(data);
+      if (response) {
+        setTimeout(() => {
+          setIsSubmit(false);
+          toast.success("Register success!");
+          router.push("/login");
+        }, 1500);
+      } else {
+        setIsSubmit(false);
+        toast.error("Something went wrong!");
+      }
+    }
   };
 
   return (
@@ -39,10 +56,7 @@ function Register() {
         <h1 className="text-2xl font-semibold leading-8">Welcome back!</h1>
         <p className="text-base font-normal leading-6">Register</p>
       </div>
-      <form
-        onSubmit={handleSubmit(handleRegister)}
-        className="mt-14 flex flex-col gap-y-7"
-      >
+      <div className="mt-14 flex flex-col gap-y-7">
         <div>
           <label
             className="text-[#353945] text-sm font-normal leading-6"
@@ -199,12 +213,18 @@ function Register() {
             {errors.accept ? errors.accept.message : ""}
           </p>
         </div>
-        <input
-          value={"Register"}
-          type="submit"
-          className="select-none flex items-center justify-center w-full py-3 px-4 bg-[#212529] text-white rounded-full cursor-pointer outline-none"
-        />
-
+        <div
+          onClick={handleSubmit(handleRegister)}
+          className={`select-none flex items-center justify-center w-full py-3 px-4 bg-[#212529] text-white rounded-full outline-none hover:opacity-80 duration-300 ${
+            isSubmit ? "cursor-default opacity-80" : "cursor-pointer"
+          }`}
+        >
+          {isSubmit ? (
+            <CircleNotch size={24} className="animate-spin" />
+          ) : (
+            "Register"
+          )}
+        </div>
         <div className="flex items-center gap-x-4">
           <span className="h-[1px] flex-1 bg-[#e3e3e4]"></span>
           <p className="text-[#718096] text-center text-xs font-normal leading-5">
@@ -220,7 +240,7 @@ function Register() {
             <Image width={30} src={FacebookIcon} alt="fb" />
           </div>
         </div>
-      </form>
+      </div>
       <div className="flex items-center justify-center mt-16 text-base font-semibold leading-6 gap-x-2">
         <p className="text-[#777E90]">Haven an account?</p>
         <Link className="text-[#141416]" href={"/login"}>

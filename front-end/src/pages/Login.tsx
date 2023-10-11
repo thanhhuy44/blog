@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AuthLayout from "@/layouts/AuthLayout";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { CircleNotch, Eye, EyeSlash } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ReactElement } from "react";
 import GoogleIcon from "@/assets/icons/google.svg";
@@ -10,6 +10,12 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import FacebookLogin from "@greatsumini/react-facebook-login";
 import AuthApi from "@/api/auth";
 import { useGoogleLogin } from "@react-oauth/google";
+import { AppDispatch, AppState } from "@/redux";
+import { useDispatch, useSelector } from "react-redux";
+import { User } from "@/interface";
+import { setIslogin, setUser } from "@/redux/states/auth";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 interface RegisterFormInputs {
   email: string;
@@ -17,6 +23,9 @@ interface RegisterFormInputs {
 }
 
 function Login() {
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [hidePassword, setHidePassword] = useState<boolean>(true);
   const {
     register,
@@ -29,11 +38,21 @@ function Login() {
   });
 
   const handleLogin: SubmitHandler<RegisterFormInputs> = async (data: any) => {
-    const response = await AuthApi.loginLocal(data);
-    console.log(
-      "🚀 ~ file: login.tsx:27 ~ consthandleLogin:SubmitHandler<RegisterFormInputs>= ~ response:",
-      response
-    );
+    if (!isSubmit) {
+      setIsSubmit(true);
+      const response = await AuthApi.loginLocal(data);
+      if (response) {
+        dispatch(setUser(response as User));
+        dispatch(setIslogin(true));
+        setTimeout(() => {
+          setIsSubmit(false);
+          toast.success("Login success!");
+          router.replace("/");
+        }, 1500);
+      } else {
+        toast.error("Something went wrong!");
+      }
+    }
   };
   return (
     <div className="w-full max-w-[384px]">
@@ -115,9 +134,15 @@ function Login() {
         </div>
         <div
           onClick={handleSubmit(handleLogin)}
-          className="flex items-center justify-center w-full py-3 px-4 bg-[#212529] text-white rounded-full cursor-pointer"
+          className={`flex items-center justify-center w-full py-3 px-4 bg-[#212529] text-white rounded-full select-none hover:opacity-80 duration-300 ${
+            isSubmit ? "cursor-text opacity-80" : "cursor-pointer "
+          }`}
         >
-          Login
+          {isSubmit ? (
+            <CircleNotch className="animate-spin" size={24} />
+          ) : (
+            "Login"
+          )}
         </div>
         <div className="flex items-center gap-x-4">
           <span className="h-[1px] flex-1 bg-[#e3e3e4]"></span>

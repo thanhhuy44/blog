@@ -1,10 +1,6 @@
 import request from "@/utils/request";
-
-interface ResponseType {
-  data?: any;
-  errCode?: number;
-  message?: string;
-}
+import { ResponseType } from "@/interface";
+import Cookies from "js-cookie";
 
 const AuthApi = {
   registerLocal: async (body: {
@@ -13,18 +9,21 @@ const AuthApi = {
     password: string;
     type: "local" | "google" | "facebook";
   }) => {
-    const response: ResponseType = await request.post("/register", {
+    const response: ResponseType = await request.post("/auth/register", {
       ...body,
       type: "local",
     });
     if (response.data) {
+      if (response.token) {
+        Cookies.set("token", response.token);
+      }
       return response.data;
     } else {
       return null;
     }
   },
   loginLocal: async (body: { email: string; password: string }) => {
-    const response: ResponseType = await request.post("/login", body);
+    const response: ResponseType = await request.post("/auth/login", body);
     if (response.data) {
       return response.data;
     } else {

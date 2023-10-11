@@ -6,6 +6,8 @@ import { ReactElement, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
 import Head from "next/head";
+import { AppState } from "@/redux";
+import { useSelector } from "react-redux";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -77,6 +79,9 @@ const popularPosts: Blog[] = [
 ];
 
 function Home() {
+  const user = useSelector((state: AppState) => state.user.user);
+  console.log("🚀 ~ file: index.tsx:83 ~ Home ~ user:", user);
+
   const [currentCategory, setCurrentCategory] = useState<Category>({
     name: "All",
   });
