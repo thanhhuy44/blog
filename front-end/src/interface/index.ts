@@ -1,4 +1,5 @@
 export interface User {
+  _id: string;
   fullname: string;
   avatar: string;
   email: string;
@@ -8,6 +9,7 @@ export interface User {
 }
 
 export interface Blog {
+  _id: string;
   title: string;
   banner: string;
   description: string;
@@ -18,7 +20,7 @@ export interface Blog {
   like_count: number;
   comments?: string[] | User[];
   comment_count: number;
-  author: string;
+  author: User;
   createdAt: string;
   category: string | Category;
 }

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 export interface IBlog {
@@ -15,6 +15,8 @@ export interface IBlog {
   author: mongoose.Types.ObjectId;
   createdAt: Date;
   category: mongoose.Types.ObjectId;
+  isPick: boolean;
+  isMain: boolean;
 }
 
 const BlogSchema = new Schema<IBlog>({
@@ -32,7 +34,7 @@ const BlogSchema = new Schema<IBlog>({
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
+    ref: 'Category',
   },
   content: {
     type: String,
@@ -49,7 +51,7 @@ const BlogSchema = new Schema<IBlog>({
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       select: false,
     },
   ],
@@ -60,7 +62,7 @@ const BlogSchema = new Schema<IBlog>({
   comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
+      ref: 'Comment',
       select: false,
     },
   ],
@@ -71,15 +73,23 @@ const BlogSchema = new Schema<IBlog>({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "User",
+    ref: 'User',
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
+  isPick: {
+    type: Boolean,
+    default: true,
+  },
+  isMain: {
+    type: Boolean,
+    default: true,
+  },
 });
 BlogSchema.index({
-  title: "text",
+  title: 'text',
 });
-const Blog = mongoose.model("Blog", BlogSchema);
+const Blog = mongoose.model('Blog', BlogSchema);
 export default Blog;

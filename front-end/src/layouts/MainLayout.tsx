@@ -1,12 +1,12 @@
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import { ReactNode } from "react";
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import { ReactNode } from 'react';
 
 function MainLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col min-h-screen">
       <Header />
-      <div>{children}</div>
+      <div className="flex-1">{children}</div>
       <Footer />
     </div>
   );
