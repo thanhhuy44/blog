@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import Comment, { IComment } from "../models/comment";
-import Blog from "../models/blog";
-import { ReactionType } from "../constants";
+import mongoose from 'mongoose';
+import Comment, { IComment } from '../models/comment';
+import Blog from '../models/blog';
+import { ReactionType } from '../constants';
 
 interface ResponseType {
   errCode: number;
@@ -20,7 +20,7 @@ const create = async (body: IComment) => {
       ) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: 'form error!',
           data: null,
         });
       } else {
@@ -38,30 +38,31 @@ const create = async (body: IComment) => {
                   $inc: { comment_count: 1 },
                   $push: { comments: newComment._id },
                 });
+                const fullComment = await newComment.populate('author');
                 if (updatedBlog) {
                   resolve({
                     errCode: 0,
-                    message: "success!",
-                    data: newComment,
+                    message: 'success!',
+                    data: fullComment,
                   });
                 } else {
                   resolve({
                     errCode: 1,
-                    message: "error!",
+                    message: 'error!',
                     data: null,
                   });
                 }
               } else {
                 resolve({
                   errCode: 1,
-                  message: "error!",
+                  message: 'error!',
                   data: null,
                 });
               }
             } else {
               resolve({
                 errCode: 1,
-                message: "comment not found to reply!",
+                message: 'comment not found to reply!',
                 data: null,
               });
             }
@@ -72,23 +73,24 @@ const create = async (body: IComment) => {
                 $inc: { comment_count: 1 },
                 $push: { comments: newComment._id },
               });
+              const fullComment = await newComment.populate('author');
               if (updatedBlog) {
                 resolve({
                   errCode: 0,
-                  message: "success!",
-                  data: newComment,
+                  message: 'success!',
+                  data: fullComment,
                 });
               } else {
                 resolve({
                   errCode: 1,
-                  message: "error!",
+                  message: 'error!',
                   data: null,
                 });
               }
             } else {
               resolve({
                 errCode: 1,
-                message: "error!",
+                message: 'error!',
                 data: null,
               });
             }
@@ -96,7 +98,7 @@ const create = async (body: IComment) => {
         } else {
           resolve({
             errCode: 1,
-            message: "blog not found!",
+            message: 'blog not found!',
             data: null,
           });
         }
@@ -104,7 +106,7 @@ const create = async (body: IComment) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -117,7 +119,7 @@ const edit = async (id: string, body: { content: string }) => {
       if (!id || !mongoose.Types.ObjectId.isValid(id) || !body.content) {
         resolve({
           errCode: 1,
-          message: "form error",
+          message: 'form error',
           data: null,
         });
       } else {
@@ -125,13 +127,13 @@ const edit = async (id: string, body: { content: string }) => {
         if (updatedComment) {
           resolve({
             errCode: 0,
-            message: "success!",
+            message: 'success!',
             data: updatedComment,
           });
         } else {
           resolve({
             errCode: 1,
-            message: "comment not found!",
+            message: 'comment not found!',
             data: null,
           });
         }
@@ -139,7 +141,7 @@ const edit = async (id: string, body: { content: string }) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -152,7 +154,7 @@ const remove = async (id: string) => {
       if (!id || !mongoose.Types.ObjectId.isValid(id)) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: 'form error!',
           data: null,
         });
       } else {
@@ -160,13 +162,13 @@ const remove = async (id: string) => {
         if (deletedComment) {
           resolve({
             errCode: 0,
-            message: "success!",
+            message: 'success!',
             data: deletedComment,
           });
         } else {
           resolve({
             errCode: 1,
-            message: "comment not found!",
+            message: 'comment not found!',
             data: null,
           });
         }
@@ -174,7 +176,7 @@ const remove = async (id: string) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -195,7 +197,7 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
       ) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: 'form error!',
           data: null,
         });
       } else {
@@ -206,7 +208,7 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
             if (comment.likes?.includes(userMongoId)) {
               resolve({
                 errCode: 1,
-                message: "already liked!",
+                message: 'already liked!',
                 data: null,
               });
             } else {
@@ -217,13 +219,13 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
               if (updatedComment) {
                 resolve({
                   errCode: 0,
-                  message: "success!",
+                  message: 'success!',
                   data: updatedComment,
                 });
               } else {
                 resolve({
                   errCode: 1,
-                  message: "comment not found!",
+                  message: 'comment not found!',
                   data: null,
                 });
               }
@@ -232,7 +234,7 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
             if (!comment.likes?.includes(userMongoId)) {
               resolve({
                 errCode: 1,
-                message: "already unliked!",
+                message: 'already unliked!',
                 data: null,
               });
             } else {
@@ -243,13 +245,13 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
               if (updatedComment) {
                 resolve({
                   errCode: 0,
-                  message: "success!",
+                  message: 'success!',
                   data: updatedComment,
                 });
               } else {
                 resolve({
                   errCode: 1,
-                  message: "comment not found!",
+                  message: 'comment not found!',
                   data: null,
                 });
               }
@@ -257,14 +259,14 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
           } else {
             resolve({
               errCode: 1,
-              message: "action invalid!",
+              message: 'action invalid!',
               data: null,
             });
           }
         } else {
           resolve({
             errCode: 1,
-            message: "comment not found!",
+            message: 'comment not found!',
             data: null,
           });
         }
@@ -272,7 +274,7 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }

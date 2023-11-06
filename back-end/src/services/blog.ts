@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
-import Blog, { IBlog } from "../models/blog";
-import { Pagination, ReactionType } from "../constants";
-import User from "../models/user";
-import Category from "../models/category";
+import mongoose from 'mongoose';
+import Blog, { IBlog } from '../models/blog';
+import { Pagination, ReactionType } from '../constants';
+import User from '../models/user';
+import Category from '../models/category';
 
 interface ResponseType {
   errCode: number;
@@ -24,24 +24,24 @@ const uploadBlog = async (body: IBlog) => {
       ) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: 'form error!',
           data: null,
         });
       } else {
         const isExistAuthor = await User.findById(body.author);
         if (isExistAuthor) {
-          const slug = body.title.toLowerCase().trim().replaceAll(" ", "-");
+          const slug = body.title.toLowerCase().trim().replaceAll(' ', '-');
           const isExistBlog = await Blog.findOne({ slug: slug });
           if (isExistBlog) {
             resolve({
               errCode: 1,
-              message: "title blog is exist!",
+              message: 'title blog is exist!',
               data: null,
             });
           } else {
             const blog = await Blog.create({
               ...body,
-              slug: body.title.toLowerCase().trim().replaceAll(" ", "-"),
+              slug: body.title.toLowerCase().trim().replaceAll(' ', '-'),
               createdAt: Date.now(),
             });
             if (blog) {
@@ -56,13 +56,13 @@ const uploadBlog = async (body: IBlog) => {
 
               resolve({
                 errCode: 0,
-                message: "success!",
+                message: 'success!',
                 data: blog,
               });
             } else {
               resolve({
                 errCode: 0,
-                message: "error!",
+                message: 'error!',
                 data: null,
               });
             }
@@ -70,7 +70,7 @@ const uploadBlog = async (body: IBlog) => {
         } else {
           resolve({
             errCode: 1,
-            message: "author not found!",
+            message: 'author not found!',
             data: null,
           });
         }
@@ -78,7 +78,7 @@ const uploadBlog = async (body: IBlog) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -96,16 +96,16 @@ const getAll = async (
       if (category) {
         if (mongoose.Types.ObjectId.isValid(category)) {
           blogs = await Blog.find({ category })
-            .sort("-createdAt")
-            .populate("author")
-            .populate("category")
+            .sort('-createdAt')
+            .populate('author')
+            .populate('category')
             .skip((page - 1) * pageSize)
             .limit(pageSize);
           if (blogs.length) {
             const total = await Blog.count();
             resolve({
               errCode: 0,
-              message: "success!",
+              message: 'success!',
               data: blogs,
               pagination: {
                 page,
@@ -124,22 +124,22 @@ const getAll = async (
         } else {
           resolve({
             errCode: 1,
-            message: "invalid category!",
+            message: 'invalid category!',
             data: null,
           });
         }
       } else {
         blogs = await Blog.find({})
-          .sort("-createdAt")
-          .populate("author")
-          .populate("category")
+          .sort('-createdAt')
+          .populate('author')
+          .populate('category')
           .skip((page - 1) * pageSize)
           .limit(pageSize);
         if (blogs.length) {
           const total = await Blog.count();
           resolve({
             errCode: 0,
-            message: "success!",
+            message: 'success!',
             data: blogs,
             pagination: {
               page,
@@ -159,7 +159,7 @@ const getAll = async (
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -171,12 +171,12 @@ const getPopular = async () => {
     try {
       const blogs = await Blog.find({ isMain: true })
         .limit(5)
-        .populate("category")
-        .populate("author");
+        .populate('category')
+        .populate('author');
       if (blogs.length) {
         resolve({
           errCode: 0,
-          message: "success!",
+          message: 'success!',
           data: blogs,
         });
       } else {
@@ -189,7 +189,7 @@ const getPopular = async () => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -200,12 +200,12 @@ const getEditorPick = async () => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     const blogs = await Blog.find({ isPick: true })
       .limit(4)
-      .populate("author")
-      .populate("category");
+      .populate('author')
+      .populate('category');
     if (blogs.length) {
       resolve({
         errCode: 0,
-        message: "cussess!",
+        message: 'cussess!',
         data: blogs,
       });
     } else {
@@ -219,7 +219,7 @@ const getEditorPick = async () => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -232,33 +232,42 @@ const getDetail = async (id: string) => {
       if (!id || !mongoose.Types.ObjectId.isValid(id)) {
         resolve({
           errCode: 1,
-          message: "invalid id!",
+          message: 'invalid id!',
           data: null,
         });
       } else {
         const blog = await Blog.findByIdAndUpdate(id, {
           $inc: { view_count: 1 },
         })
-          .select("+likes +comments")
-          .populate("likes")
+          .select('+likes +comments')
+          .populate('likes')
           .populate({
-            path: "comments",
+            path: 'comments',
             populate: {
-              path: "author",
+              path: 'author',
             },
           })
-          .populate("author")
-          .populate("category");
+          .populate({
+            path: 'comments',
+            populate: {
+              path: 'children',
+              populate: {
+                path: 'author',
+              },
+            },
+          })
+          .populate('author')
+          .populate('category');
         if (blog) {
           resolve({
             errCode: 0,
-            message: "success!",
+            message: 'success!',
             data: blog,
           });
         } else {
           resolve({
             errCode: 1,
-            message: "blog not found!",
+            message: 'blog not found!',
             data: null,
           });
         }
@@ -266,7 +275,7 @@ const getDetail = async (id: string) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -287,18 +296,18 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
       ) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: 'form error!',
           data: null,
         });
       } else {
         const userMongoId = new mongoose.Types.ObjectId(body.user);
-        const blog = await Blog.findById(id).select("+likes");
+        const blog = await Blog.findById(id).select('+likes');
         if (blog) {
           if (body.action === ReactionType.LIKE) {
             if (blog.likes?.includes(userMongoId)) {
               resolve({
                 errCode: 1,
-                message: "already liked!",
+                message: 'already liked!',
                 data: null,
               });
             } else {
@@ -309,13 +318,13 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
               if (updatedBlog) {
                 resolve({
                   errCode: 0,
-                  message: "success!",
+                  message: 'success!',
                   data: updatedBlog,
                 });
               } else {
                 resolve({
                   errCode: 1,
-                  message: "blog not found!",
+                  message: 'blog not found!',
                   data: null,
                 });
               }
@@ -324,7 +333,7 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
             if (!blog.likes?.includes(userMongoId)) {
               resolve({
                 errCode: 1,
-                message: "already unliked!",
+                message: 'already unliked!',
                 data: null,
               });
             } else {
@@ -335,13 +344,13 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
               if (updatedBlog) {
                 resolve({
                   errCode: 0,
-                  message: "success!",
+                  message: 'success!',
                   data: updatedBlog,
                 });
               } else {
                 resolve({
                   errCode: 1,
-                  message: "comment not found!",
+                  message: 'comment not found!',
                   data: null,
                 });
               }
@@ -349,14 +358,14 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
           } else {
             resolve({
               errCode: 1,
-              message: "action invalid!",
+              message: 'action invalid!',
               data: null,
             });
           }
         } else {
           resolve({
             errCode: 1,
-            message: "blog not found!",
+            message: 'blog not found!',
             data: null,
           });
         }
@@ -364,7 +373,7 @@ const reaction = async (id: string, body: { action: string; user: string }) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -377,7 +386,7 @@ const remove = async (id: string) => {
       if (!id || !mongoose.Types.ObjectId.isValid(id)) {
         resolve({
           errCode: 1,
-          message: "form error!",
+          message: 'form error!',
           data: null,
         });
       } else {
@@ -385,13 +394,13 @@ const remove = async (id: string) => {
         if (removedBlog) {
           resolve({
             errCode: 0,
-            message: "success!",
+            message: 'success!',
             data: removedBlog,
           });
         } else {
           resolve({
             errCode: 1,
-            message: "blog not found!",
+            message: 'blog not found!',
             data: null,
           });
         }
@@ -399,7 +408,7 @@ const remove = async (id: string) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
@@ -413,28 +422,28 @@ const search = async (
 ) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      if (!keyword || keyword.trim() === "") {
+      if (!keyword || keyword.trim() === '') {
         resolve({
           errCode: 1,
-          message: "invalid keyword!",
+          message: 'invalid keyword!',
           data: null,
         });
       } else {
         const blogs = await Blog.find({ $text: { $search: keyword } })
-          .populate("author")
+          .populate('author')
           .skip((page - 1) * pageSize)
           .limit(pageSize);
 
         if (blogs) {
           resolve({
             errCode: 0,
-            message: "success!",
+            message: 'success!',
             data: blogs,
           });
         } else {
           resolve({
             errCode: 1,
-            message: "error!",
+            message: 'error!',
             data: null,
           });
         }
@@ -442,7 +451,7 @@ const search = async (
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }

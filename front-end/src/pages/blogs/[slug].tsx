@@ -1,20 +1,20 @@
-import MainLayout from "@/layouts/MainLayout";
-import Image from "next/image";
-import { ReactElement, useEffect, useState } from "react";
-import Banner from "@/assets/images/banner.png";
-import { useRouter } from "next/router";
-import BlogApi from "@/api/blog";
-import { Blog, Comment as CommentType } from "@/interface";
-import Skeleton from "react-loading-skeleton";
-import dayjs from "dayjs";
-import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { AppState } from "@/redux";
-import Link from "next/link";
-import { CircleNotch } from "@phosphor-icons/react";
-import CommentApi from "@/api/comment";
-import toast from "react-toastify";
-import Comment from "@/components/Comment";
+import MainLayout from '@/layouts/MainLayout';
+import Image from 'next/image';
+import { ReactElement, useEffect, useState } from 'react';
+import Banner from '@/assets/images/banner.png';
+import { useRouter } from 'next/router';
+import BlogApi from '@/api/blog';
+import { Blog, Comment as CommentType } from '@/interface';
+import Skeleton from 'react-loading-skeleton';
+import dayjs from 'dayjs';
+import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux';
+import Link from 'next/link';
+import { CircleNotch } from '@phosphor-icons/react';
+import CommentApi from '@/api/comment';
+import toast from 'react-toastify';
+import Comment from '@/components/Comment';
 
 interface FormInputs {
   author: string;
@@ -57,32 +57,39 @@ function BlogDetail() {
     setIsComment(true);
     const comment = await CommentApi.create(data);
     if (comment) {
-      console.log(
-        "🚀 ~ file: [slug].tsx:61 ~ handleComment ~ comment:",
-        comment
-      );
+      const newBlog = {
+        ...blog,
+        comments: [
+          { ...comment, author: user },
+          ...(blog?.comments as CommentType[]),
+        ],
+      };
+      setTimeout(() => {
+        reset({
+          content: '',
+          author: data.author,
+          blog: data.blog,
+        });
+        setBlog(newBlog as Blog);
+        setIsComment(false);
+      }, 1500);
+    } else {
+      setTimeout(() => {
+        setIsComment(false);
+      }, 1500);
     }
-
-    setTimeout(() => {
-      reset({
-        content: "",
-        author: data.author,
-        blog: data.blog,
-      });
-      setIsComment(false);
-    }, 1500);
   };
 
   useEffect(() => {
     if (router.query.id) {
       handleGetData(router.query.id as string);
-      setValue("blog", router.query.id as string);
+      setValue('blog', router.query.id as string);
     }
   }, [router.query.id]);
 
   useEffect(() => {
     if (isLogin && user) {
-      setValue("author", user._id);
+      setValue('author', user._id);
     }
   }, [isLogin, user]);
 
@@ -97,7 +104,7 @@ function BlogDetail() {
           <Skeleton className="max-w-xs" />
         ) : (
           <p className="text-[#495057] text-xs font-light leading-5">
-            {dayjs(blog?.createdAt).format("DD/MM/YYYY")}
+            {dayjs(blog?.createdAt).format('DD/MM/YYYY')}
           </p>
         )}
         {loading ? (
@@ -147,8 +154,7 @@ function BlogDetail() {
             className="font-normal text-lg whitespace-pre-wrap"
             dangerouslySetInnerHTML={{
               __html: blog?.content as string,
-            }}
-          ></div>
+            }}></div>
         )}
       </div>
       <div className="my-8 h-[1px] bg-[#333]"></div>
@@ -160,44 +166,42 @@ function BlogDetail() {
                 fill
                 alt="avatar"
                 src={
-                  "https://my-blog-assets.s3.us-east-005.backblazeb2.com/default_avatar.png"
+                  'https://my-blog-assets.s3.us-east-005.backblazeb2.com/default_avatar.png'
                 }
                 className="!static !aspect-square !w-8"
               />
               <div className="flex-1">
                 <textarea
                   disabled={isComment}
-                  {...register("content", {
+                  {...register('content', {
                     required: {
                       value: true,
-                      message: "This field is required",
+                      message: 'This field is required',
                     },
                   })}
                   placeholder="Write a comment..."
                   rows={6}
-                  className="w-full flex-1 border border-[#ccc] focus:!border-[#333] duration-300 focus:outline-0 focus:shadow-none p-3 resize-none"
-                ></textarea>
+                  className="w-full flex-1 border border-[#ccc] focus:!border-[#333] duration-300 focus:outline-0 focus:shadow-none p-3 resize-none"></textarea>
                 <p className="mt-1 text-xs text-[#FF0000]">
-                  {errors.content ? errors.content.message : ""}
+                  {errors.content ? errors.content.message : ''}
                 </p>
               </div>
             </div>
             <div
               onClick={handleSubmit(handleComment)}
               className={`min-w-[150px] flex items-center justify-center py-2 px-6 text-white font-medium bg-[#141416] hover:bg-black/80 duration-300 select-none active:bg-slate-400 ${
-                isComment ? "cursor-wait opacity-40" : " cursor-pointer"
-              }`}
-            >
+                isComment ? 'cursor-wait opacity-40' : ' cursor-pointer'
+              }`}>
               {isComment ? (
                 <CircleNotch className="animate-spin" size={24} />
               ) : (
-                "Comment"
+                'Comment'
               )}
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-center gap-x-1">
-            <Link href={"/login"}>
+            <Link href={'/login'}>
               <p className="font-medium hover:underline">Login</p>
             </Link>
             <p>to comment.</p>

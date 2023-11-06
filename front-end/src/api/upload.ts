@@ -8,7 +8,6 @@ interface ResponseType {
 
 const UploadApi = {
   upload: async (body: { file: File }) => {
-    console.log('🚀 ~ file: upload.ts:11 ~ upload: ~ file:', body.file);
     const response: ResponseType = await request.post('/upload', body, {
       headers: {
         'Content-Type': 'multipart/form-data',

@@ -26,11 +26,12 @@ export interface Blog {
 }
 
 export interface Comment {
+  _id: string;
   author: string | User;
   blog: string | Blog;
   content: string;
-  parent?: string | User;
-  children?: string[] | User[];
+  parent?: string | Comment;
+  children?: string[] | Comment[];
   likes: string[] | User[];
   like_count: number;
 }

@@ -1,33 +1,33 @@
-import MainLayout from "@/layouts/MainLayout";
-import { ReactElement, useEffect, useMemo, useState } from "react";
-import dynamic from "next/dynamic";
-import UploadApi from "@/api/upload";
-import "react-quill/dist/quill.snow.css";
-import { Controller, useForm } from "react-hook-form";
-import { CircleNotch } from "@phosphor-icons/react";
-import BlogApi from "@/api/blog";
-import { Blog } from "@/interface";
-import { useSelector } from "react-redux";
-import { AppState } from "@/redux";
-import { useRouter } from "next/router";
+import MainLayout from '@/layouts/MainLayout';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
+import UploadApi from '@/api/upload';
+import 'react-quill/dist/quill.snow.css';
+import { Controller, useForm } from 'react-hook-form';
+import { CircleNotch } from '@phosphor-icons/react';
+import BlogApi from '@/api/blog';
+import { Blog } from '@/interface';
+import { useSelector } from 'react-redux';
+import { AppState } from '@/redux';
+import { useRouter } from 'next/router';
 
 const formats = [
-  "header",
-  "font",
-  "size",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "blockquote",
-  "code-block",
-  "list",
-  "bullet",
-  "indent",
-  "link",
-  "image",
-  "video",
-  "imageBlot",
+  'header',
+  'font',
+  'size',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'blockquote',
+  'code-block',
+  'list',
+  'bullet',
+  'indent',
+  'link',
+  'image',
+  'video',
+  'imageBlot',
 ];
 
 interface FormInputs {
@@ -51,17 +51,17 @@ function Upload() {
     getValues,
   } = useForm<FormInputs>({
     defaultValues: {
-      content: "",
+      content: '',
     },
   });
 
   const ReactQuill = dynamic(
     async () => {
-      const { default: RQ } = await import("react-quill");
-      const { default: ImageUploader } = await import("quill-image-uploader");
-      const { default: ImageResize } = await import("quill-image-resize");
-      RQ.Quill.register("modules/imageUploader", ImageUploader);
-      RQ.Quill.register("modules/imageResize", ImageResize);
+      const { default: RQ } = await import('react-quill');
+      const { default: ImageUploader } = await import('quill-image-uploader');
+      const { default: ImageResize } = await import('quill-image-resize');
+      RQ.Quill.register('modules/imageUploader', ImageUploader);
+      RQ.Quill.register('modules/imageResize', ImageResize);
       return RQ;
     },
     {
@@ -75,7 +75,7 @@ function Upload() {
   );
 
   const onEditorChange = (value: string) => {
-    setValue("content", value);
+    setValue('content', value);
   };
 
   const handleUpdload = async (data: FormInputs) => {
@@ -89,7 +89,14 @@ function Upload() {
           author: user?._id as string,
         });
         if (response) {
+          const blog = response as Blog;
           setTimeout(() => {
+            router.push({
+              pathname: `/blogs/${blog.slug}`,
+              query: {
+                id: blog._id,
+              },
+            });
             setIsSubmit(false);
           }, 1500);
         } else {
@@ -106,25 +113,25 @@ function Upload() {
   };
 
   useEffect(() => {
-    if (!isLogin) {
-      router.replace("/login");
+    if (!isLogin && router.isReady) {
+      router.replace('/login');
     }
-  }, [isLogin]);
+  }, [isLogin, router.isReady]);
 
   useEffect(() => {
-    register("content", {
+    register('content', {
       required: {
         value: true,
-        message: "This field is required!",
+        message: 'This field is required!',
       },
     });
   }, [register]);
 
-  if (!isLogin) {
-    router.replace("/login");
+  // if (!isLogin) {
+  //   router.replace('/login');
 
-    return null;
-  }
+  //   return null;
+  // }
 
   return (
     <div className="container max-w-5xl mx-auto my-28 flex flex-col gap-y-4">
@@ -137,16 +144,16 @@ function Upload() {
             id="title"
             size={1}
             placeholder=""
-            {...register("title", {
+            {...register('title', {
               required: {
                 value: true,
-                message: "This field is required.",
+                message: 'This field is required.',
               },
             })}
           />
         </div>
         <p className="mt-1 text-xs text-[#FF0000]">
-          {errors.title ? errors.title.message : ""}
+          {errors.title ? errors.title.message : ''}
         </p>
       </div>
 
@@ -158,16 +165,16 @@ function Upload() {
             id="description"
             placeholder=""
             rows={4}
-            {...register("description", {
+            {...register('description', {
               required: {
                 value: true,
-                message: "This field is required.",
+                message: 'This field is required.',
               },
             })}
           />
         </div>
         <p className="mt-1 text-xs text-[#FF0000]">
-          {errors.description ? errors.description.message : ""}
+          {errors.description ? errors.description.message : ''}
         </p>
       </div>
       <div className="flex flex-col">
@@ -179,45 +186,45 @@ function Upload() {
             id="banner"
             size={1}
             placeholder=""
-            {...register("banner", {
+            {...register('banner', {
               required: {
                 value: true,
-                message: "This field is required.",
+                message: 'This field is required.',
               },
             })}
           />
         </div>
         <p className="mt-1 text-xs text-[#FF0000]">
-          {errors.banner ? errors.banner.message : ""}
+          {errors.banner ? errors.banner.message : ''}
         </p>
       </div>
 
       <div className="flex flex-col gap-y-1">
         <label htmlFor="content">Content</label>
         <ReactQuill
-          defaultValue={getValues("content")}
+          defaultValue={getValues('content')}
           onChange={(value) => {
             onEditorChange(value);
           }}
           modules={{
             toolbar: [
-              [{ header: "1" }, { header: "2" }],
+              [{ header: '1' }, { header: '2' }],
               [{ size: [] }],
               [
-                "bold",
-                "italic",
-                "underline",
-                "strike",
-                "blockquote",
-                "code-block",
+                'bold',
+                'italic',
+                'underline',
+                'strike',
+                'blockquote',
+                'code-block',
               ],
               [
-                { list: "ordered" },
-                { list: "bullet" },
-                { indent: "-1" },
-                { indent: "+1" },
+                { list: 'ordered' },
+                { list: 'bullet' },
+                { indent: '-1' },
+                { indent: '+1' },
               ],
-              ["link", "image", "video"],
+              ['link', 'image', 'video'],
             ],
             clipboard: {
               matchVisual: false,
@@ -230,10 +237,10 @@ function Upload() {
                     if (url) {
                       resolve(url);
                     } else {
-                      alert("Upload failed!");
+                      alert('Upload failed!');
                     }
                   } catch (error) {
-                    alert("Upload failed!");
+                    alert('Upload failed!');
                   }
                 });
                 // return new Promise((resolve, reject) => {
@@ -246,14 +253,14 @@ function Upload() {
               },
             },
             imageResize: {
-              modules: ["Resize", "DisplaySize", "Toolbar"],
+              modules: ['Resize', 'DisplaySize', 'Toolbar'],
             },
           }}
           formats={formats}
           theme="snow"
         />
         <p className="mt-1 text-xs text-[#FF0000]">
-          {errors.content ? errors.content.message : ""}
+          {errors.content ? errors.content.message : ''}
         </p>
       </div>
 
@@ -264,13 +271,12 @@ function Upload() {
           console.log(errors);
         })}
         className={`flex items-center justify-center w-full py-3 px-4 bg-[#212529] text-white select-none hover:opacity-80 duration-300 ${
-          isSubmit ? "cursor-text opacity-80" : "cursor-pointer "
-        }`}
-      >
+          isSubmit ? 'cursor-text opacity-80' : 'cursor-pointer '
+        }`}>
         {isSubmit ? (
           <CircleNotch className="animate-spin" size={24} />
         ) : (
-          "Upload"
+          'Upload'
         )}
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { UploadedFile } from "express-fileupload";
-import { b2 } from "../index";
+import { UploadedFile } from 'express-fileupload';
+import { b2 } from '../index';
 interface ResponseType {
   errCode: number;
   message: string;
@@ -11,21 +11,25 @@ const upload = async (file: UploadedFile) => {
     if (!file) {
       resolve({
         errCode: 1,
-        message: "form error!",
+        message: 'form error!',
         data: null,
       });
     } else {
       await b2
         .getUploadUrl({
-          bucketId: "84def1e2e7afea948aad041d",
+          bucketId: '84def1e2e7afea948aad041d',
         })
         .then(async (response: any) => {
           const time = Date.now();
+          const fileExtension = file.name.split('.').pop();
           await b2
             .uploadFile({
               uploadUrl: response.data.uploadUrl,
               uploadAuthToken: response.data.authorizationToken,
-              fileName: `${file.name}-${time}`,
+              fileName: `${file.name.replace(
+                `.${fileExtension}` as string,
+                ''
+              )}-${time}.${fileExtension}`,
               data: file.data,
               onUploadProgress: (event: any) => {},
             })
@@ -33,13 +37,13 @@ const upload = async (file: UploadedFile) => {
               if (response) {
                 resolve({
                   errCode: 0,
-                  message: "success!",
+                  message: 'success!',
                   data: `https://my-blog-assets.s3.us-east-005.backblazeb2.com/${response?.data?.fileName}`,
                 });
               } else {
                 resolve({
                   errCode: 1,
-                  message: "error!",
+                  message: 'error!',
                   data: null,
                 });
               }
@@ -51,7 +55,7 @@ const upload = async (file: UploadedFile) => {
     } catch (error) {
       resolve({
         errCode: 1,
-        message: "error!",
+        message: 'error!',
         data: null,
       });
     }
