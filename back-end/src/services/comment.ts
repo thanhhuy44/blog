@@ -53,14 +53,14 @@ const create = async (body: IComment) => {
                 }
               } else {
                 resolve({
-                  errCode: 0,
+                  errCode: 1,
                   message: "error!",
                   data: null,
                 });
               }
             } else {
               resolve({
-                errCode: 0,
+                errCode: 1,
                 message: "comment not found to reply!",
                 data: null,
               });
@@ -74,20 +74,20 @@ const create = async (body: IComment) => {
               });
               if (updatedBlog) {
                 resolve({
-                  errCode: 1,
+                  errCode: 0,
                   message: "success!",
                   data: newComment,
                 });
               } else {
                 resolve({
-                  errCode: 0,
+                  errCode: 1,
                   message: "error!",
                   data: null,
                 });
               }
             } else {
               resolve({
-                errCode: 0,
+                errCode: 1,
                 message: "error!",
                 data: null,
               });
@@ -95,7 +95,7 @@ const create = async (body: IComment) => {
           }
         } else {
           resolve({
-            errCode: 0,
+            errCode: 1,
             message: "blog not found!",
             data: null,
           });
