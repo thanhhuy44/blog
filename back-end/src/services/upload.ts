@@ -20,11 +20,12 @@ const upload = async (file: UploadedFile) => {
           bucketId: "84def1e2e7afea948aad041d",
         })
         .then(async (response: any) => {
+          const time = Date.now();
           await b2
             .uploadFile({
               uploadUrl: response.data.uploadUrl,
               uploadAuthToken: response.data.authorizationToken,
-              fileName: file.name,
+              fileName: `${file.name}-${time}`,
               data: file.data,
               onUploadProgress: (event: any) => {},
             })

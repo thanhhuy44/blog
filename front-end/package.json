@@ -25,6 +25,8 @@
     "eslint-config-next": "13.4.19",
     "framer-motion": "^10.16.4",
     "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "next": "13.4.19",
     "postcss": "8.4.30",
@@ -43,6 +45,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.4",
+    "@types/jsonwebtoken": "^9.0.4",
     "@types/lodash": "^4.14.198"
   }
 }

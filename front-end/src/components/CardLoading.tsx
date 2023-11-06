@@ -1,9 +1,9 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 function CardLoading() {
   return (
-    <SkeletonTheme baseColor="#ccc" highlightColor="#444">
+    <SkeletonTheme>
       <div className="flex flex-col gap-y-3">
         <Skeleton className="aspect-video" />
         <Skeleton className="h-8" />
