@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import AuthLayout from '@/layouts/AuthLayout';
-import { Eye, EyeSlash, CircleNotch } from '@phosphor-icons/react';
-import Link from 'next/link';
-import { ReactElement } from 'react';
-import GoogleIcon from '@/assets/icons/google.svg';
-import FacebookIcon from '@/assets/icons/facebook.svg';
-import Image from 'next/image';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import AuthApi from '@/api/auth';
-import { toast } from 'react-toastify';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import AuthLayout from "@/layouts/AuthLayout";
+import { Eye, EyeSlash, CircleNotch } from "@phosphor-icons/react";
+import Link from "next/link";
+import { ReactElement } from "react";
+import GoogleIcon from "@/assets/icons/google.svg";
+import FacebookIcon from "@/assets/icons/facebook.svg";
+import Image from "next/image";
+import { useForm, SubmitHandler } from "react-hook-form";
+import AuthApi from "@/api/auth";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 interface RegisterFormInputs {
   fullname: string;
@@ -30,7 +30,7 @@ function Register() {
   const [hidePassword, setHidePassword] = useState<boolean>(true);
   const [hideConfirm, setHideConfirm] = useState<boolean>(true);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const password = watch('password', '');
+  const password = watch("password", "");
   const handleRegister: SubmitHandler<RegisterFormInputs> = async (
     data: any
   ) => {
@@ -41,12 +41,12 @@ function Register() {
       if (response) {
         setTimeout(() => {
           setIsSubmit(false);
-          toast.success('Register success!');
-          router.push('/login');
+          toast.success("Register success!");
+          router.push("/login");
         }, 1500);
       } else {
         setIsSubmit(false);
-        toast.error('Something went wrong!');
+        toast.error("Something went wrong!");
       }
     }
   };
@@ -66,16 +66,16 @@ function Register() {
               size={1}
               placeholder="Full name"
               id="fullname"
-              {...register('fullname', {
+              {...register("fullname", {
                 required: {
-                  message: 'This field is required.',
+                  message: "This field is required.",
                   value: true,
                 },
               })}
             />
           </div>
           <p className="mt-1 text-xs text-[#FF0000]">
-            {errors.fullname ? errors.fullname.message : ''}
+            {errors.fullname ? errors.fullname.message : ""}
           </p>
         </div>
         <div>
@@ -86,20 +86,20 @@ function Register() {
               type="email"
               size={1}
               placeholder="Email"
-              {...register('email', {
+              {...register("email", {
                 required: {
                   value: true,
-                  message: 'This field is required.',
+                  message: "This field is required.",
                 },
                 pattern: {
                   value: /^\S+@\S+\.\S+$/,
-                  message: 'Invalid email.',
+                  message: "Invalid email.",
                 },
               })}
             />
           </div>
           <p className="mt-1 text-xs text-[#FF0000]">
-            {errors.email ? errors.email.message : ''}
+            {errors.email ? errors.email.message : ""}
           </p>
         </div>
         <div>
@@ -107,19 +107,19 @@ function Register() {
             <input
               id="password"
               className="bg-transparent flex-1 outline-none"
-              type={hidePassword ? 'password' : 'text'}
+              type={hidePassword ? "password" : "text"}
               size={1}
               placeholder="Password"
-              {...register('password', {
+              {...register("password", {
                 required: {
                   value: true,
-                  message: 'This field is required.',
+                  message: "This field is required.",
                 },
                 pattern: {
                   value:
                     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
                   message:
-                    'Password have to contain at least 8 characters, 1 number, 1 upper and 1 lowercase.',
+                    "Password have to contain at least 8 characters, 1 number, 1 upper and 1 lowercase.",
                 },
               })}
             />
@@ -127,30 +127,31 @@ function Register() {
               onClick={() => {
                 setHidePassword((prev) => !prev);
               }}
-              className="select-none cursor-pointer flex items-center h-full">
+              className="select-none cursor-pointer flex items-center h-full"
+            >
               {hidePassword ? <Eye /> : <EyeSlash />}
             </div>
           </div>
           <p className="mt-1 text-xs text-[#FF0000]">
-            {errors.password ? errors.password.message : ''}
+            {errors.password ? errors.password.message : ""}
           </p>
         </div>
         <div>
           <div className="mt-1 rounded-md py-3 px-4 bg-[#EDF2F7] flex items-center gap-x-3">
             <input
               className="bg-transparent flex-1 outline-none"
-              type={hideConfirm ? 'password' : 'text'}
+              type={hideConfirm ? "password" : "text"}
               size={1}
               placeholder="Confirm password"
               id="confirmPassword"
-              {...register('confirmPassword', {
+              {...register("confirmPassword", {
                 required: {
                   value: true,
-                  message: 'This field is required',
+                  message: "This field is required",
                 },
                 validate: (value) => {
                   if (value !== password) {
-                    return 'Passwords do not match!';
+                    return "Passwords do not match!";
                   }
                 },
               })}
@@ -159,12 +160,13 @@ function Register() {
               onClick={() => {
                 setHideConfirm((prev) => !prev);
               }}
-              className="select-none cursor-pointer flex items-center h-full">
+              className="select-none cursor-pointer flex items-center h-full"
+            >
               {hideConfirm ? <Eye /> : <EyeSlash />}
             </div>
           </div>
           <p className="mt-1 text-xs text-[#FF0000]">
-            {errors.confirmPassword ? errors.confirmPassword.message : ''}
+            {errors.confirmPassword ? errors.confirmPassword.message : ""}
           </p>
         </div>
         <div>
@@ -173,10 +175,10 @@ function Register() {
               type="checkbox"
               id="accept"
               className="cursor-pointer"
-              {...register('accept', {
+              {...register("accept", {
                 required: {
                   value: true,
-                  message: 'This field is required.',
+                  message: "This field is required.",
                 },
               })}
             />
@@ -185,18 +187,19 @@ function Register() {
             </label>
           </div>
           <p className="mt-1 text-xs text-[#FF0000]">
-            {errors.accept ? errors.accept.message : ''}
+            {errors.accept ? errors.accept.message : ""}
           </p>
         </div>
         <div
           onClick={handleSubmit(handleRegister)}
           className={`select-none flex items-center justify-center w-full py-3 px-4 bg-[#212529] text-white rounded-full outline-none hover:opacity-80 duration-300 ${
-            isSubmit ? 'cursor-default opacity-80' : 'cursor-pointer'
-          }`}>
+            isSubmit ? "cursor-default opacity-80" : "cursor-pointer"
+          }`}
+        >
           {isSubmit ? (
             <CircleNotch size={24} className="animate-spin" />
           ) : (
-            'Register'
+            "Register"
           )}
         </div>
         <div className="flex items-center gap-x-4">
@@ -217,8 +220,8 @@ function Register() {
       </div>
       <div className="flex items-center justify-center mt-16 text-base font-semibold leading-6 gap-x-2">
         <p className="text-[#777E90]">Haven an account?</p>
-        <Link className="text-[#141416]" href={'/login'}>
-          Login
+        <Link className="text-[#141416]" href={"/login"}>
+          <span>Login</span>
         </Link>
       </div>
     </div>

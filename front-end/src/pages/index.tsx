@@ -4,7 +4,6 @@ import { Metadata } from "next";
 import { ReactElement, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
-import Head from "next/head";
 import { AppState } from "@/redux";
 import { useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
@@ -43,11 +42,12 @@ const categories: Category[] = [
 
 function Home() {
   const user = useSelector((state: AppState) => state.user.user);
-  const [mounted, setMounted] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadMore, setLoadMore] = useState<boolean>(false);
   const [popularBlogs, setPopularBlogs] = useState<Blog[]>([]);
   const [editorPickBlogs, setEditorPickBlogs] = useState<Blog[]>([]);
-
+  const [latestBlogs, setLatestBlogs] = useState<Blog[]>([]);
   const [currentCategory, setCurrentCategory] = useState<Category>({
     name: "All",
   });
@@ -66,9 +66,17 @@ function Home() {
     }
   };
 
+  const handleGetLatestBlogs = async (page: number) => {
+    const response = await BlogApi.getAll(page);
+    if (response) {
+      setLatestBlogs(response as Blog[]);
+    }
+  };
+
   const handleGetHomeData = async () => {
     await handleGetPopularBlogs();
     await handleGetEditorPickBlogs();
+    await handleGetLatestBlogs(page);
 
     setTimeout(() => {
       setLoading(false);
@@ -76,7 +84,6 @@ function Home() {
   };
 
   useEffect(() => {
-    setMounted(true);
     handleGetHomeData();
   }, []);
 
@@ -96,7 +103,7 @@ function Home() {
       <CardLoading />
     </div>
   ) : (
-    <div>
+    <>
       <Swiper>
         {popularBlogs.length
           ? popularBlogs.map((item, index) => (
@@ -128,7 +135,7 @@ function Home() {
                           }}
                           className="text-[#f8f9fa] text-2xl font-bold leading-10 max-w-[600px]"
                         >
-                          {item.title}
+                          <span>{item.title}</span>
                         </Link>
                         <p className="text-[#e5e5e5] text-xs font-light leading-5">
                           {item.description}
@@ -154,34 +161,33 @@ function Home() {
               index ? <Card direction="row" data={blog} key={index} /> : null
             )}
           </div>
-          <div>
-            <div className="relative w-full h-full aspect-[3/4] rounded overflow-hidden">
-              <Image
-                src={editorPickBlogs[0].banner}
-                alt="banner"
-                fill
-                className="w-full aspect-[3/4] object-cover object-center"
-              />
-              <div className="absolute top-0 left-0 right-0 bottom-0 bg-black/50 flex items-end">
-                <div className="flex-1 flex flex-col gap-y-4 mb-12 ml-12">
-                  <p className="text-[#e5e5e5] text-xs font-light leading-5">
-                    {dayjs(editorPickBlogs[0].createdAt).format("DD/MM/YYYY")}
-                  </p>
-                  <Link
-                    href={{
-                      pathname: `/blogs/${editorPickBlogs[0].slug}`,
-                      query: {
-                        id: editorPickBlogs[0]._id,
-                      },
-                    }}
-                    className="text-[#f8f9fa] text-2xl font-bold leading-10 max-w-[600px]"
-                  >
+          <div className="relative w-full h-full aspect-[3/4] rounded overflow-hidden">
+            <Image
+              src={editorPickBlogs[0].banner}
+              alt="banner"
+              fill
+              className="w-full aspect-[3/4] object-cover object-center"
+            />
+            <div className="absolute top-0 left-0 right-0 bottom-0 bg-black/50 flex items-end">
+              <div className="flex-1 flex flex-col gap-y-4 mb-12 ml-12">
+                <p className="text-[#e5e5e5] text-xs font-light leading-5">
+                  {dayjs(editorPickBlogs[0].createdAt).format("DD/MM/YYYY")}
+                </p>
+                <Link
+                  href={{
+                    pathname: `/blogs/${editorPickBlogs[0].slug}`,
+                    query: {
+                      id: editorPickBlogs[0]._id,
+                    },
+                  }}
+                >
+                  <span className="text-[#f8f9fa] text-2xl font-bold leading-10 max-w-[600px]">
                     {editorPickBlogs[0].title}
-                  </Link>
-                  <p className="text-[#e5e5e5] text-xs font-light leading-5">
-                    {editorPickBlogs[0].description}
-                  </p>
-                </div>
+                  </span>
+                </Link>
+                <p className="text-[#e5e5e5] text-xs font-light leading-5">
+                  {editorPickBlogs[0].description}
+                </p>
               </div>
             </div>
           </div>
@@ -209,13 +215,14 @@ function Home() {
           </div>
         </div>
         <div className="grid grid-cols-4 gap-x-8 gap-y-11">
-          {/* <Card />
-          <Card />
-          <Card />
-          <Card /> */}
+          {latestBlogs.length
+            ? latestBlogs.map((blog, index) => (
+                <Card direction="col" data={blog} key={index} />
+              ))
+            : null}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

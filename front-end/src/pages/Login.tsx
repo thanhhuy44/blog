@@ -65,7 +65,7 @@ function Login() {
         <p className="text-base font-normal leading-6">Sign in</p>
       </div>
       <div className="mt-14 flex flex-col gap-y-7">
-        <div>
+        <>
           <div className="rounded-md py-3 px-4 bg-[#EDF2F7] flex items-center gap-x-3 border-[1px] border-transparent focus-within:border-[#141416] duration-300">
             <input
               className="bg-transparent flex-1 outline-none"
@@ -87,8 +87,8 @@ function Login() {
           <p className="mt-1 text-xs text-[#FF0000]">
             {errors.email ? errors.email.message : ""}
           </p>
-        </div>
-        <div>
+        </>
+        <>
           <div className="rounded-md py-3 px-4 bg-[#EDF2F7] flex items-center gap-x-3 border-[1px] border-transparent focus-within:border-[#141416] duration-300">
             <input
               className="bg-transparent flex-1 outline-none"
@@ -120,9 +120,11 @@ function Login() {
           <p className="mt-1 text-xs text-[#FF0000]">
             {errors.password ? errors.password.message : ""}
           </p>
-        </div>
+        </>
         <div className="-mt-4 flex justify-end">
-          <Link href={"/forgot-password"}>Forgot password?</Link>
+          <Link href={"/forgot-password"}>
+            <span>Forgot password?</span>
+          </Link>
         </div>
         <div
           onClick={handleSubmit(handleLogin)}
@@ -177,7 +179,7 @@ function Login() {
       <div className="flex items-center justify-center mt-16 text-base font-semibold leading-6 gap-x-2">
         <p className="text-[#777E90]">Don’t have an account?</p>
         <Link className="text-[#141416]" href={"/register"}>
-          Register
+          <span>Register</span>
         </Link>
       </div>
     </div>

@@ -43,11 +43,12 @@ function Card({ direction, data }: Props) {
               id: data._id,
             },
           }}
-          className="text-[#212529] text-2xl font-bold leading-10"
         >
-          {data.title}
+          <span className="text-[#212529] text-2xl font-bold leading-10 line-clamp-2">
+            {data.title}
+          </span>
         </Link>
-        <p className="text-[#495057] text-xs font-light leading-5">
+        <p className="text-[#495057] text-xs font-light leading-5 line-clamp-3">
           {data.description}
         </p>
         <span className="w-full h-[1px] bg-[#e5e5e5]"></span>

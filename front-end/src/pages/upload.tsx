@@ -130,7 +130,7 @@ function Upload() {
     <div className="container max-w-5xl mx-auto my-28 flex flex-col gap-y-4">
       <div className="flex flex-col">
         <label htmlFor="title">Title</label>
-        <div className="mt-1 py-3 px-4 flex items-center gap-x-3 border border-[#ccc]">
+        <div className="mt-1 py-3 px-4 flex items-center gap-x-3 border border-[#ccc] focus-within:border-[#333] duration-300">
           <input
             className="bg-transparent flex-1 outline-none text-xl font-semibold"
             type="text"
@@ -152,7 +152,7 @@ function Upload() {
 
       <div className="flex flex-col">
         <label htmlFor="description">Description</label>
-        <div className="mt-1 py-3 px-4 flex items-center gap-x-3 border border-[#ccc]">
+        <div className="mt-1 py-3 px-4 flex items-center gap-x-3 border border-[#ccc] focus-within:border-[#333] duration-300">
           <textarea
             className="bg-transparent flex-1 outline-none"
             id="description"
@@ -172,7 +172,7 @@ function Upload() {
       </div>
       <div className="flex flex-col">
         <label htmlFor="banner">Banner</label>
-        <div className="mt-1 py-3 px-4 flex items-center gap-x-3 border border-[#ccc]">
+        <div className="mt-1 py-3 px-4 flex items-center gap-x-3 border border-[#ccc] focus-within:border-[#333] duration-300">
           <input
             className="bg-transparent flex-1 outline-none"
             type="file"

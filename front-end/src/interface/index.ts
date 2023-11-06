@@ -18,7 +18,7 @@ export interface Blog {
   slug: string;
   likes?: string[] | User[];
   like_count: number;
-  comments?: string[] | User[];
+  comments?: Comment[];
   comment_count: number;
   author: User;
   createdAt: string;

@@ -7,9 +7,15 @@ function Footer() {
         <div className="flex items-center justify-between py-10">
           <h1 className="text-[#f8f9fa] text-lg font-bold leading-6">VENCE</h1>
           <div className="flex items-center gap-x-6 text-[#F8F9FA80]/50 text-xs font-medium leading-6">
-            <Link href={"/about-us"}>About Us</Link>
-            <Link href={"/Archive"}>Archive</Link>
-            <Link href={"/contact"}>Contact</Link>
+            <Link href={"/about-us"}>
+              <span>About Us</span>
+            </Link>
+            <Link href={"/Archive"}>
+              <span>Archive</span>
+            </Link>
+            <Link href={"/contact"}>
+              <span>Contact</span>
+            </Link>
           </div>
         </div>
         <div className="w-full h-[1px] bg-[#F8F9FA80]/50"></div>

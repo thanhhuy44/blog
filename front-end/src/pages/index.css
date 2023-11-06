@@ -89,10 +89,18 @@ body {
 .ql-container.ql-snow {
   font-family: "Poppins", sans-serif;
   font-size: 14px;
-  color: #6c757d;
+  color: #000;
   font-weight: 300;
   line-height: 178.571%;
   min-height: 500px;
+}
+
+.ql-container:focus-within {
+  border-top: 1px solid #333 !important;
+  border-left: 1px solid #333 !important;
+  border-right: 1px solid #333 !important;
+  border-bottom: 1px solid #333 !important;
+  transition: linear 300ms;
 }
 
 /*  */

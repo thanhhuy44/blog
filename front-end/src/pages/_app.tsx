@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement, type ReactNode } from "react";
+import { type ReactElement, type ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -9,8 +9,6 @@ import "./index.css";
 import "swiper/css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useRouter } from "next/router";
-import Cookies from "js-cookie";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -26,14 +24,12 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <Provider store={store}>
-      <div>
-        {getLayout(
-          <GoogleOAuthProvider clientId="725001572314-dcstfjo3925ig02enku0e8tua7niq4lr.apps.googleusercontent.com">
-            <Component {...pageProps} />
-            <ToastContainer />
-          </GoogleOAuthProvider>
-        )}
-      </div>
+      {getLayout(
+        <GoogleOAuthProvider clientId="725001572314-dcstfjo3925ig02enku0e8tua7niq4lr.apps.googleusercontent.com">
+          <Component {...pageProps} />
+          <ToastContainer />
+        </GoogleOAuthProvider>
+      )}
     </Provider>
   );
 }

@@ -1,5 +1,5 @@
-import { ResponseType } from '@/interface';
-import request from '@/utils/request';
+import { ResponseType } from "@/interface";
+import request from "@/utils/request";
 
 const BlogApi = {
   upload: async (body: {
@@ -9,18 +9,19 @@ const BlogApi = {
     content: string;
     description: string;
   }) => {
-    const response: ResponseType = await request.post('/blogs', body);
+    const response: ResponseType = await request.post("/blogs", body);
     if (response.errCode === 0) {
       return response.data;
     } else {
       return null;
     }
   },
-  getAll: async () => {
-    const response: ResponseType = await request.get('/blogs', {
+  getAll: async (page: number, category?: string) => {
+    const response: ResponseType = await request.get("/blogs", {
       params: {
-        page: 1,
+        page,
         pageSize: 20,
+        category,
       },
     });
     if (response.errCode === 0) {
@@ -30,7 +31,7 @@ const BlogApi = {
     }
   },
   getPopular: async () => {
-    const response: ResponseType = await request.get('/blogs/popular');
+    const response: ResponseType = await request.get("/blogs/popular");
     if (response.errCode === 0) {
       return response.data;
     } else {
@@ -38,7 +39,7 @@ const BlogApi = {
     }
   },
   getEditorPick: async () => {
-    const response: ResponseType = await request.get('/blogs/editor-pick');
+    const response: ResponseType = await request.get("/blogs/editor-pick");
     if (response.errCode === 0) {
       return response.data;
     } else {
