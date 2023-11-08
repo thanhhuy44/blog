@@ -9,6 +9,8 @@ import "./index.css";
 import "swiper/css";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loading-skeleton/dist/skeleton.css";
+import Head from "next/head";
+import favicon from "@/assets/images/favicon.png";
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -26,6 +28,14 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     <Provider store={store}>
       {getLayout(
         <GoogleOAuthProvider clientId="725001572314-dcstfjo3925ig02enku0e8tua7niq4lr.apps.googleusercontent.com">
+          <Head>
+            <title>Spotless | Enjoy your life!</title>
+            <link
+              rel="shortcut icon"
+              href={`${favicon.src}`}
+              type="image/x-icon"
+            />
+          </Head>
           <Component {...pageProps} />
           <ToastContainer />
         </GoogleOAuthProvider>
