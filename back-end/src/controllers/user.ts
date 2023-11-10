@@ -1,5 +1,6 @@
 import { Request, Response, Express } from "express";
 import UserServices from "../services/user";
+import { UploadedFile } from "express-fileupload";
 
 const getAll = async (req: Request, res: Response) => {
   const page = Number(req.query.page) || 1;
@@ -40,8 +41,8 @@ const remove = async (req: Request, res: Response) => {
 
 const changeAvatar = async (req: Request, res: Response) => {
   const data = await UserServices.changeAvatar(
-    req.files ? req.files : null,
-    req.body.user
+    req?.files?.avatar as UploadedFile,
+    req?.authen?.user?._id
   );
   return res.status(200).json(data);
 };

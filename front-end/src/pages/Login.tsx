@@ -17,6 +17,7 @@ import { setIslogin, setUser } from "@/redux/states/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import Head from "next/head";
 
 interface RegisterFormInputs {
   email: string;
@@ -60,6 +61,9 @@ function Login() {
 
   return (
     <div className="w-full max-w-[384px]">
+      <Head>
+        <title>Spotless | Login</title>
+      </Head>
       <div className="text-[#141416]">
         <h1 className="text-2xl font-semibold leading-8">Welcome back!</h1>
         <p className="text-base font-normal leading-6">Sign in</p>

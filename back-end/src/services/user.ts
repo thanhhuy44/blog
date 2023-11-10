@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import User, { IUser } from "../models/user";
-import { FileArray } from "express-fileupload";
+import { FileArray, UploadedFile } from "express-fileupload";
 import { b2 } from "../index";
 
 interface ResponseType {
@@ -92,7 +92,7 @@ const getDetail = async (id: string) => {
           data: null,
         });
       } else {
-        const user = await User.findById(id);
+        const user = await User.findById(id).populate("blogs");
         if (user) {
           resolve({
             errCode: 0,
@@ -187,16 +187,10 @@ const remove = async (id: string) => {
   });
 };
 
-const changeAvatar = async (file: any, id: string | null) => {
+const changeAvatar = async (file: UploadedFile, id: string) => {
   return new Promise<ResponseType>(async (resolve, reject) => {
     try {
-      if (
-        !file ||
-        !file.avatar ||
-        !file.avatar ||
-        !id ||
-        !mongoose.Types.ObjectId.isValid(id)
-      ) {
+      if (!file || !id || !mongoose.Types.ObjectId.isValid(id)) {
         resolve({
           errCode: 1,
           message: "form error!",
@@ -206,33 +200,30 @@ const changeAvatar = async (file: any, id: string | null) => {
         await b2
           .getUploadUrl({
             bucketId: "84def1e2e7afea948aad041d",
-            // ...common arguments (optional)
           })
           .then(async (response: any) => {
+            const time = Date.now();
+            const fileExtension = file.name.split(".").pop();
             await b2
               .uploadFile({
                 uploadUrl: response.data.uploadUrl,
                 uploadAuthToken: response.data.authorizationToken,
-                fileName: file.avatar.name,
-                // contentLength: 0, // optional data length, will default to data.byteLength or data.length if not provided
-                //mime: "", // optional mime type, will default to 'b2/x-auto' if not provided
-                data: file.avatar.data, // this is expecting a Buffer, not an encoded string
-                //hash: "sha1-hash", // optional data hash, will use sha1(data) if not provided
-                // info: {
-                //     // optional info headers, prepended with X-Bz-Info- when sent, throws error if more than 10 keys set
-                //     // valid characters should be a-z, A-Z and '-', all other characters will cause an error to be thrown
-                //     key1: "value",
-                //     key2: "value",
-                // },
+                fileName: `${file.name.replace(
+                  `.${fileExtension}` as string,
+                  ""
+                )}-${time}.${fileExtension}`,
+                data: file.data,
                 onUploadProgress: (event: any) => {},
-                //onUploadProgress: (event) => {} || null // progress monitoring
-                // ...common arguments (optional)
               })
               .then(async (response: any) => {
-                if (response.data.fileName) {
-                  const updatedUser = await User.findByIdAndUpdate(id, {
-                    avatar: `https://my-blog-assets.s3.us-east-005.backblazeb2.com/${response.data.fileName}`,
-                  });
+                if (response) {
+                  const updatedUser = await User.findByIdAndUpdate(
+                    id,
+                    {
+                      avatar: `https://my-blog-assets.s3.us-east-005.backblazeb2.com/${response?.data?.fileName}`,
+                    },
+                    { new: true }
+                  );
                   if (updatedUser) {
                     resolve({
                       errCode: 0,
