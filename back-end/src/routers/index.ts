@@ -17,7 +17,11 @@ const routers = (app: Application) => {
   // auth
   router.post('/auth/register', AuthControllers.register);
   router.post('/auth/login', AuthControllers.login);
-  router.post('/auth/change-password', AuthControllers.changePassword);
+  router.post(
+    '/auth/change-password',
+    authenticateToken,
+    AuthControllers.changePassword
+  );
 
   // blogs
   router.post('/blogs', authenticateToken, BlogControllers.uploadBlog);

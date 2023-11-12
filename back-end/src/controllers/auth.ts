@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import AuthServices from "../services/auth";
+import { Request, Response } from 'express';
+import AuthServices from '../services/auth';
 
 const register = async (req: Request, res: Response) => {
   const data = await AuthServices.register(req.body);
@@ -12,7 +12,10 @@ const login = async (req: Request, res: Response) => {
 };
 
 const changePassword = async (req: Request, res: Response) => {
-  const data = await AuthServices.changePassword(req.body);
+  const data = await AuthServices.changePassword({
+    ...req.body,
+    id: req?.authen?.user?._id,
+  });
   return res.status(200).json(data);
 };
 

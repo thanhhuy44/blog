@@ -30,6 +30,20 @@ const AuthApi = {
       return null;
     }
   },
+  changePassword: async (body: {
+    currentPassword: string;
+    newPassword: string;
+  }) => {
+    const response: ResponseType = await request.post(
+      '/auth/change-password',
+      body
+    );
+    if (response.data) {
+      return response.data;
+    } else {
+      return null;
+    }
+  },
 };
 
 export default AuthApi;
