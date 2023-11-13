@@ -29,7 +29,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       {getLayout(
         <GoogleOAuthProvider clientId="725001572314-dcstfjo3925ig02enku0e8tua7niq4lr.apps.googleusercontent.com">
           <Head>
-            <title>Spotless | Enjoy your life!</title>
+            <title>Spostless | Enjoy your life!</title>
             <link
               rel="shortcut icon"
               href={`${favicon.src}`}

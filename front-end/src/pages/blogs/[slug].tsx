@@ -133,11 +133,11 @@ function BlogDetail() {
           <div className="flex items-center gap-x-3">
             <Image
               fill
-              className="!w-8 !static"
+              className="!w-12 object-cover aspect-square rounded-full !static"
               src={blog?.author.avatar as string}
               alt="author avatar"
             />
-            <p className="text-[#495057] text-xs font-light leading-5">
+            <p className="text-[#495057] text-xl font-medium leading-5">
               {blog?.author.fullname}
             </p>
           </div>
@@ -174,7 +174,7 @@ function BlogDetail() {
                 src={
                   "https://my-blog-assets.s3.us-east-005.backblazeb2.com/default_avatar.png"
                 }
-                className="!static !aspect-square !w-8"
+                className="!static !aspect-square !w-8 !h-8 rounded-full"
               />
               <div className="flex-1">
                 <textarea

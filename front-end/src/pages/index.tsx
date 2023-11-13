@@ -198,7 +198,8 @@ function Home() {
           <h1 className="text-[#495057] text-2xl font-bold leading-5">
             Latest Articles
           </h1>
-          <div className="my-11 flex items-center gap-x-6 text-xs font-medium leading-6">
+          <div className="my-11"></div>
+          {/* <div className="my-11 flex items-center gap-x-6 text-xs font-medium leading-6">
             {categories.map((category, index) => (
               <p
                 className={`cursor-pointer ${
@@ -212,7 +213,7 @@ function Home() {
                 {category.name}
               </p>
             ))}
-          </div>
+          </div> */}
         </div>
         <div className="grid grid-cols-4 gap-x-8 gap-y-11">
           {latestBlogs.length
