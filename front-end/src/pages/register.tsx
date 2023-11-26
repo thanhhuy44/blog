@@ -52,7 +52,7 @@ function Register() {
   };
 
   return (
-    <div className="w-full max-w-[584px]">
+    <div className="w-full max-w-[584px] min-h-full">
       <div className="text-[#141416]">
         <h1 className="text-2xl font-semibold leading-8">
           Welcome to our site!
@@ -170,11 +170,11 @@ function Register() {
           </p>
         </div>
         <div>
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-start md:items-center gap-x-2">
             <input
               type="checkbox"
               id="accept"
-              className="cursor-pointer"
+              className="cursor-pointer mt-1 md:mt-0"
               {...register('accept', {
                 required: {
                   value: true,
@@ -209,10 +209,18 @@ function Register() {
           <span className="h-[1px] flex-1 bg-[#e3e3e4]"></span>
         </div>
         <div className="flex items-center justify-center gap-x-4">
-          <div className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer">
+          <div
+            onClick={() => {
+              toast.info('Coming soon!');
+            }}
+            className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer">
             <Image width={32} src={GoogleIcon} alt="google" />
           </div>
-          <div className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer">
+          <div
+            onClick={() => {
+              toast.info('Coming soon!');
+            }}
+            className="bg-white w-14 h-14 flex items-center justify-center rounded-full shadow cursor-pointer">
             <Image width={30} src={FacebookIcon} alt="fb" />
           </div>
         </div>

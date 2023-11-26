@@ -19,11 +19,13 @@ function AuthLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="grid grid-cols-2 h-screen overflow-hidden">
-      <div className="flex items-center justify-center overflow-y-auto px-4">
-        {children}
+    <div className="grid grid-cols-1 md:grid-cols-2 items-stretch w-screen h-screen overflow-hidden">
+      <div className="min-h-full overflow-y-auto">
+        <div className="py-8 px-4 flex items-center justify-center">
+          {children}
+        </div>
       </div>
-      <div className="h-screen overflow-hidden">
+      <div className="hidden md:block h-screen overflow-hidden">
         <Image
           className="h-full w-full object-cover object-center"
           src={Banner}

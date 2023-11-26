@@ -85,7 +85,7 @@ function Header() {
             </span>
           </Link>
           <div className="flex items-center gap-x-6 text-sm">
-            <div className="flex items-center py-1 pr-2 pl-4 gap-x-3 bg-red-50 w-48 rounded-full">
+            <div className="hidden sm:flex items-center py-1 pr-2 pl-4 gap-x-3 bg-red-50 w-48 rounded-full">
               <input
                 type="text"
                 placeholder="Search..."
