@@ -28,24 +28,12 @@ const connectDB = async () => {
   }
 };
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:4000",
-      "http://192.168.1.41:3000",
-      "http://localhost:8080",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ type: "application/json" }));
 app.use(bodyParser.raw());
 app.use(fileUpload());
-
-routers(app);
 
 app.get("/", (req: Request, res: Response) => {
   return res.send("App is running");
@@ -56,3 +44,5 @@ app.listen(port, async () => {
   await b2.authorize();
   console.log(`Server is running at http://localhost:${port}`);
 });
+
+routers(app);
