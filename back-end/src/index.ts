@@ -39,10 +39,12 @@ app.get("/", (req: Request, res: Response) => {
   return res.send("App is running");
 });
 
-app.listen(port, async () => {
-  await connectDB();
-  await b2.authorize();
-  console.log(`Server is running at http://localhost:${port}`);
-});
+connectDB();
+
+b2.authorize();
 
 routers(app);
+
+app.listen(port, async () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
