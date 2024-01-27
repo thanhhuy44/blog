@@ -7,10 +7,6 @@ import { useRouter } from 'next/router';
 
 function AuthLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
-  console.log(
-    '🚀 ~ file: AuthLayout.tsx:10 ~ AuthLayout ~ router:',
-    router.pathname
-  );
   const isLogin = useSelector((state: AppState) => state.user.isLogin);
 
   if (isLogin && router.pathname !== '/change-password') {
@@ -20,8 +16,8 @@ function AuthLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 items-stretch w-screen h-screen overflow-hidden">
-      <div className="min-h-full overflow-y-auto">
-        <div className="py-8 px-4 flex items-center justify-center">
+      <div className="min-h-full w-full bg-red-200 overflow-y-auto flex flex-col items-center justify-center">
+        <div className="py-8 px-4 w-full max-w-3xl flex justify-center">
           {children}
         </div>
       </div>
